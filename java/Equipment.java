@@ -18,6 +18,11 @@ public class Equipment {
 	private int equipCapacity = 0;     //equipmentCapacity attribute
 	private MySQLDatabase mysqldb;     //the database object
 	
+	private int paperID = 0;
+	private String paperTitle = "";
+	private String paperAbstraction = "";
+	private String paperCitation = "";
+
 	/**
 	 * Default constructor
 	 */
@@ -196,12 +201,12 @@ public class Equipment {
 	 * using all this object's attributes (name, description, capacity).
 	 */
 	public void put() {
-		String stmnt = "UPDATE equipment SET equipmentname = '" + equipName 
-				+ "', equipmentdescription = '" + equipDescript
-				+ "', equipmentcapacity = " + equipCapacity 
-				+ " WHERE equipID = ?";
+		String stmnt = "UPDATE papers SET title = '" + paperTitle 
+				+ "', abstraction = '" + paperAbstraction
+				+ "', citation = " + paperCitation 
+				+ " WHERE id = ?";
 		ArrayList<String> values = new ArrayList<>(1);
-        values.add(Integer.toString(equipID));
+        values.add(Integer.toString(paperID));
 		
 		try {
 			mysqldb.connect();
@@ -219,9 +224,9 @@ public class Equipment {
 	 * the database.
 	 */
 	public void post() {
-		String stmnt = "INSERT INTO equipment VALUES (" 
-				+ equipID + ",'" + equipName + "','" + equipDescript + "',"
-				+ equipCapacity + ")";
+		String stmnt = "INSERT INTO papers VALUES (" 
+				+ paperID + ",'" + paperTitle + "','" + paperAbstraction + "',"
+				+ paperCitation + ")";
 		
 		try {
 			mysqldb.connect();
