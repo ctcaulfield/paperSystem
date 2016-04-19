@@ -18,10 +18,12 @@ public class Equipment {
 	private int equipCapacity = 0;     //equipmentCapacity attribute
 	private MySQLDatabase mysqldb;     //the database object
 	
+   //for our project
 	private int paperID = 0;
 	private String paperTitle = "";
 	private String paperAbstraction = "";
 	private String paperCitation = "";
+   
 
 	/**
 	 * Default constructor
@@ -153,8 +155,8 @@ public class Equipment {
 		boolean doesFetch = false;
 		
 		//USE this string for a correct select statement
-        String stmnt = "SELECT equipmentname, equipmentdescription, "
-        		+ "equipmentcapacity FROM equipment WHERE equipID = ?";
+        String stmnt = "SELECT title, abstract, "
+        		+ "citation FROM papers WHERE equipID = ?";
         ArrayList<String> values = new ArrayList<>(1);
         values.add(Integer.toString(equipID));
         
@@ -244,7 +246,7 @@ public class Equipment {
 	 * object's equipmentID
 	 */
 	public void delete() {
-		String stmnt = "DELETE FROM equipment WHERE equipID = " + equipID;
+		String stmnt = "DELETE FROM papers WHERE equipID = " + paperID;
 		
 		try {
 			mysqldb.connect();
