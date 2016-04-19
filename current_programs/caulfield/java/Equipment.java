@@ -308,7 +308,7 @@ public class Equipment
          parameterValues.add(strEquipID);
         
          //update made object
-         string = String.format("UPDATE equipment SET equipmentName =? WHERE EquipID =?");
+         string = String.format("UPDATE paper SET equipmentName =? WHERE EquipID =?");
           
          if(mySQLdb.setData(string,parameterValues)){
             System.out.println(String.format("Successful query: %s ",string));
