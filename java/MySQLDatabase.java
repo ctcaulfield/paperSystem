@@ -14,11 +14,11 @@ import java.util.Scanner;
  */
 public class MySQLDatabase {
 	public String uri = 
-			"jdbc:mysql://127.0.0.1/travel?useSSL=false";               //path for connection
+			"jdbc:mysql://127.0.0.1/484project?useSSL=false";               //path for connection
 	private final String driver = "com.mysql.jdbc.Driver"; //SQL driver
 	private Connection conn = null;                        //Connection attribute
 	private final String user = "root";                    //DB username
-	private final String password = "";           //DB password
+	private final String password = "goduke";           //DB password
 	private final String INS = "INSERT";
     private final String UPD = "UPDATE";
     private final String DEL = "DELETE";
