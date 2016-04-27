@@ -3,7 +3,7 @@
  * 
  * @author Ian Kitchen <igk2718@rit.edu>
  * 
- * A Java object representation of the papers table in the database
+ * A Java object representation of an entry in the papers table
  */
 public class Papers {
 	
