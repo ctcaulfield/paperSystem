@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * 
  * @author Ian Kitchen <igk2718@rit.edu>
@@ -11,6 +13,7 @@ public class Faculty {
 	private String lName;
 	private String password;
 	private String email;
+	private ArrayList<Papers> papers;
 	private MySQLDatabase mysqldb;
 	
 	/**

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 /**
  * 
@@ -11,6 +12,8 @@ public class Papers {
 	private String title;
 	private String pAbstract;
 	private String citation;
+	private ArrayList<String> keywords;
+	private ArrayList<Faculty> author;
 	private MySQLDatabase mysqldb;
 	
 	/**
@@ -120,3 +123,4 @@ public class Papers {
 		this.citation = citation;
 	}
 }
+
