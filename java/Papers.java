@@ -23,13 +23,21 @@ public class Papers {
 	/**
 	 * Constructor that sets a default paper ID attribute
 	 * 
-	 * @param paperId
+	 * @param paperId - the id of the paper
 	 */
 	public Papers(int paperId) {
 		this.paperId = paperId;
 		
 	}//END contructor2
 	
+	/**
+	 * Constructor that sets all of the attributes
+	 * 
+	 * @param paperId - the id of the paper
+	 * @param title - the title of the paper
+	 * @param pAbstract - a brief summary of the paper
+	 * @param citation - citations for the paper
+	 */
 	public Papers(int paperId, String title, String pAbstract, 
 			String citation) {
 		this.paperId = paperId;
@@ -41,64 +49,72 @@ public class Papers {
 	}//END constructor3
 	
 	/**
+	 * Gets the id of this paper
 	 * 
-	 * @return
+	 * @return the current id of the paper
 	 */
 	public int getId() {
 		return paperId;
 	}
 	
 	/**
+	 * Sets the id attribute of this paper
 	 * 
-	 * @param paperId
+	 * @param paperId - the new id of the paper
 	 */
 	public void setId(int paperId) {
 		this.paperId = paperId;
 	}
 	
 	/**
+	 * Gets the title of the paper
 	 * 
-	 * @return
+	 * @return the title of the paper
 	 */
 	public String getTitle() {
 		return title;
 	}
 	
 	/**
+	 * Sets the title attribute of this paper
 	 * 
-	 * @param title
+	 * @param title - the new title of the paper
 	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 	
 	/**
+	 * Gets the abstract of the paper
 	 * 
-	 * @return
+	 * @return the abstract of the paper
 	 */
 	public String getAbstract() {
 		return pAbstract;
 	}
 	
 	/**
+	 * Sets the abstract attribute of this paper
 	 * 
-	 * @param pAbstract
+	 * @param pAbstract - the new abstract of the paper
 	 */
 	public void setAbstract(String pAbstract) {
 		this.pAbstract = pAbstract;
 	}
 	
 	/**
+	 * Gets the citation of this paper
 	 * 
-	 * @return
+	 * @return the citation of this paper
 	 */
 	public String getCitation() {
 		return citation;
 	}
 	
 	/**
+	 * Sets the citation attribute of this paper
 	 * 
-	 * @param citation
+	 * @param citation - the new citation of the paper
 	 */
 	public void setCitation(String citation) {
 		this.citation = citation;
