@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
+import java.math.BigInteger;
 import java.security.*;
 /**
  * @author Christopher Caulfield
@@ -43,9 +44,7 @@ public class MySQLUI extends JFrame implements ActionListener{
     * @param args Unused
     */
    public static void main(String [] args){
-      msqldb = new MySQLDatabase();
-		faculty = populateFaculty(msqldb);
-
+       msqldb = new MySQLDatabase();
 
       MySQLUI signIn = new MySQLUI();
          signIn.setVisible( true );
@@ -63,6 +62,7 @@ public class MySQLUI extends JFrame implements ActionListener{
     * action listeners onto the buttons.
     */
    public MySQLUI(){    
+	   faculty = populateFaculty(msqldb);
       jpContainer = new JPanel();                              //Create new JPanel to hold many JPanels that will wait to collect information
       add( jpContainer );
      
@@ -119,23 +119,33 @@ public class MySQLUI extends JFrame implements ActionListener{
       }
       else if(ae.getActionCommand() == "Log in"){
          System.out.println("Student/Guest button clicked"); 
+         String hashtext = "";
          String username = jtfUser.getText();
-         String password = jtfPass.getText();
-         try {  
-            byte[]passbyte = password.getBytes("UTF-8");
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[]digest = md.digest(passbyte);
-            password = new String(digest,"UTF-8");
-         } 
-         catch (Exception e) {
-            System.out.println("encoding failed");
-         }   
+         String password = jtfPass.getText(); 
+    	 MessageDigest m;
+		 try {
+		     //encode the password given by user
+		     m = MessageDigest.getInstance("MD5");
+			 m.reset();
+        	 m.update(password.getBytes());
+        	 byte[] digest = m.digest();
+        	 BigInteger bigInt = new BigInteger(1,digest);
+        	 hashtext = bigInt.toString(16);
+        	 
+        	 // we need to zero pad the hash to get the full 32 chars.
+        	 while(hashtext.length() < 32 ){
+        	     hashtext = "0"+hashtext;
+        	 }  
+		 } catch (NoSuchAlgorithmException e) {
+			System.out.println("Encoding failed");
+		 }
+        	 
          for(Faculty f: faculty) {
-           if(f.getFirstName() == username && f.getPassword() == password){
-             System.out.println("Open Faculty/Admin view"); 
-             this.dispose();
-           }
-		   }
+             if(f.getEmail().equals(username) && f.getPassword().equals(hashtext)){
+                 System.out.println("Open Faculty/Admin view"); 
+                 this.dispose();
+             }
+		 }
          //if survives through loop - nothing was found 
          System.out.println("Password or username incorrect");  
       }     
@@ -143,7 +153,7 @@ public class MySQLUI extends JFrame implements ActionListener{
    
    //connects to database and populates faculty information 
    @SuppressWarnings({ "rawtypes", "unchecked" })
-	private static ArrayList<Faculty> populateFaculty(MySQLDatabase sql) {
+	private ArrayList<Faculty> populateFaculty(MySQLDatabase sql) {
 		
 		ArrayList<Faculty> faculty = new ArrayList<>();
 		
