@@ -1,11 +1,17 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
+import java.util.ArrayList;
+import java.security.*;
 /**
  * @author Christopher Caulfield
  */
 public class MySQLUI extends JFrame implements ActionListener{
+
+
+	private static MySQLDatabase msqldb;
+	private static ArrayList<Faculty> faculty;
+
    /**
     * The JPanel that holds the Messages panel.
     */
@@ -19,7 +25,7 @@ public class MySQLUI extends JFrame implements ActionListener{
    private JLabel jlWelcome;
    private JLabel jlWho;
    private JTextField jtfUser;
-   private JTextField jtfIP;
+   private JTextField jtfPass;
    private JButton jbLogIn;
    private JButton jbStudentGuest;
    private JButton jbGo;
@@ -37,12 +43,18 @@ public class MySQLUI extends JFrame implements ActionListener{
     * @param args Unused
     */
    public static void main(String [] args){
+      msqldb = new MySQLDatabase();
+		faculty = populateFaculty(msqldb);
+
+
       MySQLUI signIn = new MySQLUI();
          signIn.setVisible( true );
          signIn.setSize(300, 300);
          signIn.setLocationRelativeTo( null );
          signIn.setDefaultCloseOperation( EXIT_ON_CLOSE );
          signIn.pack();    
+         
+         
    }// end of main
 
    /**
@@ -77,10 +89,10 @@ public class MySQLUI extends JFrame implements ActionListener{
       jpMessages.add( jpWho );
         
       jtfUser = new JTextField("Enter username...");             // Add the TextField
-      jtfIP = new JTextField("Enter password...");
+      jtfPass = new JTextField("Enter password...");
      
       jpMessages.add( jtfUser );
-      jpMessages.add( jtfIP ); 
+      jpMessages.add( jtfPass ); 
      
     
       jbStudentGuest = new JButton("Student/Guest");
@@ -100,21 +112,62 @@ public class MySQLUI extends JFrame implements ActionListener{
    
    
    public void actionPerformed(ActionEvent ae){      
-      if(ae.getActionCommand() == "Log in"){                    // Wait for someone to push Go!
-         System.out.println("Log in button clicked");             
-         
-         //if user name/password field is filled - continue
-         //then check if the user name/password is true
-            
-            System.out.println("Open Faculty/Admin view");
-            //teacher = new TeacherView2(jtfUser.getText());
+      if(ae.getActionCommand() == "Student/Guest"){                    // Wait for someone to push Go!
+         System.out.println("Log in button clicked");                       
+            System.out.println("Open Student/Guest view");
             this.dispose();
       }
-      else if(ae.getActionCommand() == "Student/Guest"){
+      else if(ae.getActionCommand() == "Log in"){
          System.out.println("Student/Guest button clicked"); 
-         System.out.println("Open Student/Guest view");
-         //teacher = new TeacherView2(jtfUser.getText());
-         this.dispose();
+         String username = jtfUser.getText();
+         String password = jtfPass.getText();
+         try {  
+            byte[]passbyte = password.getBytes("UTF-8");
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[]digest = md.digest(passbyte);
+            password = new String(digest,"UTF-8");
+         } 
+         catch (Exception e) {
+            System.out.println("encoding failed");
+         }   
+         for(Faculty f: faculty) {
+           if(f.getFirstName() == username && f.getPassword() == password){
+             System.out.println("Open Faculty/Admin view"); 
+             this.dispose();
+           }
+		   }
+         //if survives through loop - nothing was found 
+         System.out.println("Password or username incorrect");  
       }     
    }// end of actionPerformed
+   
+   //connects to database and populates faculty information 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+	private static ArrayList<Faculty> populateFaculty(MySQLDatabase sql) {
+		
+		ArrayList<Faculty> faculty = new ArrayList<>();
+		
+		try {
+			sql.connect();
+			
+			String stmnt = "SELECT * FROM faculty";
+			
+			ArrayList<ArrayList> resultsTable = sql.getData(stmnt);
+			
+			for(ArrayList<String> l: resultsTable) {
+				int id = Integer.parseInt(l.get(0));
+				String fName = l.get(1);
+				String lName = l.get(2);
+				String password = l.get(3);
+				String email = l.get(4);
+				Faculty newF = new Faculty(id, fName, lName, password, email);
+				faculty.add(newF);			
+			}
+			
+		} catch (DLException e) {
+			e.printStackTrace();
+		}
+		return faculty;
+	}
+	
 }// end of MySQLUI
