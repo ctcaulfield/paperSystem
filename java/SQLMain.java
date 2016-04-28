@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * @author Ian Kitchen
  * 
@@ -5,67 +7,52 @@
  * running the methods that add and modify the data in the database
  */
 public class SQLMain {
+	
+	private static MySQLDatabase msqldb;
 
 	public static void main(String[] args) {
 		
 		/************************* Start **************************/
 		
-		MySQLDatabase msqldb = new MySQLDatabase();
-		Equipment equip1 = new Equipment(1, "F17", "Fighter Jet", 2);
-		Equipment equip2 = new Equipment(2, "B26", "Bomber", 6);
-		boolean isStmnt = false;
-		
-		try {
-			msqldb.connect();
-			equip1.post();
-			equip2.post();
-			//b.
-            isStmnt = equip1.fetch();
-			if(isStmnt) {
-				System.out.println("ID: " + equip1.getID() + "\n" +
-						           "Name: " + equip1.getName() + "\n" +
-						           "Description: " + equip1.getDescription() + 
-						           "\nCapacity: " + equip1.getCapacity());
-			}
-			else
-				System.out.println("Fetch Failed");
-			
-			//c.
-			equip1.swap(2);
-			
-			//d.
-			isStmnt = equip1.fetch();
-			if(isStmnt) {
-				System.out.println("ID: " + equip1.getID() + "\n" +
-						           "Name: " + equip1.getName() + "\n" +
-						           "Description: " + equip1.getDescription() + 
-						           "\nCapacity: " + equip1.getCapacity());
-			}
-			else
-				System.out.println("Fetch Failed");
-			
-			//e.
-			Equipment equip3 = new Equipment(2);
-			isStmnt = equip3.fetch();
-			if(isStmnt) {
-				System.out.println("ID: " + equip3.getID() + "\n" +
-						           "Name: " + equip3.getName() + "\n" +
-						           "Description: " + equip3.getDescription() + 
-						           "\nCapacity: " + equip3.getCapacity());
-			}
-			else
-				System.out.println("Fetch Failed");
-			
-			equip1.delete();
-			equip2.delete();
-			equip3.delete();
-			
-			msqldb.close();
-		} catch (DLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		msqldb = new MySQLDatabase();
+		ArrayList<Faculty> faculty = populateFaculty(msqldb);
+		int count = 1;
+		for(Faculty f: faculty) {
+			System.out.println("Faculty number " + count);
+			System.out.println("ID: " + f.getId());
+			System.out.println("Name: "+f.getFirstName()+" "+f.getLastName());
+			System.out.println("Password: "+f.getPassword());
+			System.out.println("Email: "+f.getEmail()+"\n");
 		}
 			
 	}//END main
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static ArrayList<Faculty> populateFaculty(MySQLDatabase sql) {
+		
+		ArrayList<Faculty> faculty = new ArrayList<>();
+		
+		try {
+			sql.connect();
+			
+			String stmnt = "SELECT * FROM faculty";
+			
+			ArrayList<ArrayList> resultsTable = sql.getData(stmnt);
+			
+			for(ArrayList<String> l: resultsTable) {
+				int id = Integer.parseInt(l.get(0));
+				String fName = l.get(1);
+				String lName = l.get(2);
+				String password = l.get(3);
+				String email = l.get(4);
+				Faculty newF = new Faculty(id, fName, lName, password, email);
+				faculty.add(newF);			
+			}
+			
+		} catch (DLException e) {
+			e.printStackTrace();
+		}
+		return faculty;
+	}
 
 }//END SQLMain
