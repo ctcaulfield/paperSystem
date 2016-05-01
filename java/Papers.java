@@ -13,7 +13,7 @@ public class Papers {
 	private String pAbstract;
 	private String citation;
 	private ArrayList<String> keywords;
-	private ArrayList<Faculty> author;
+	private ArrayList<Faculty> authors;
 	private MySQLDatabase mysqldb;
 	
 	/**
@@ -21,6 +21,9 @@ public class Papers {
 	 */
 	public Papers() {
 		mysqldb = new MySQLDatabase();
+		authors = new ArrayList<>();
+		keywords = new ArrayList<>();
+		
 	}//END constructor
 	
 	/**
@@ -30,6 +33,9 @@ public class Papers {
 	 */
 	public Papers(int paperId) {
 		this.paperId = paperId;
+		mysqldb = new MySQLDatabase();
+		authors = new ArrayList<>();
+		keywords = new ArrayList<>();
 		
 	}//END contructor2
 	
@@ -48,6 +54,8 @@ public class Papers {
 		this.pAbstract = pAbstract;
 		this.citation = citation;
 		mysqldb = new MySQLDatabase();
+		authors = new ArrayList<>();
+		keywords = new ArrayList<>();
 		
 	}//END constructor3
 	
@@ -121,6 +129,60 @@ public class Papers {
 	 */
 	public void setCitation(String citation) {
 		this.citation = citation;
+	}
+	
+	/**
+	 * Returns the list of authors for this paper
+	 * 
+	 * @return the list of authors
+	 */
+	public ArrayList<Faculty> getAuthors() {
+		return authors;
+	}
+	
+	/**
+	 * Sets the current authors list to a new list of authors
+	 * 
+	 * @param authors - the new list of authors
+	 */
+	public void setAuthors(ArrayList<Faculty> authors) {
+		this.authors = authors;
+	}
+	
+	/**
+	 * Adds a single author to the current list of authors
+	 * 
+	 * @param newAuthor - the new author to be added to the list
+	 */
+	public void addAuthor(Faculty newAuthor) {
+		authors.add(newAuthor);
+	}
+	
+	/**
+	 * Gets the whole list of keywords
+	 * 
+	 * @return - the list of keywords
+	 */
+	public ArrayList<String> getKeywords() {
+		return keywords;
+	}
+	
+	/**
+	 * Sets the current list of keywords to a new list
+	 * 
+	 * @param keywords - the new list of keywords
+	 */
+	public void setKeywords(ArrayList<String> keywords) {
+		this.keywords = keywords;
+	}
+	
+	/**
+	 * Adds a single keyword to the keywords list
+	 * 
+	 * @param keyword - the new keyword to be added
+	 */
+	public void addKeyword(String keyword) {
+		keywords.add(keyword);
 	}
 }
 

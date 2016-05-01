@@ -142,4 +142,31 @@ public class Faculty {
 		this.email = email;
 	}
 	
+	/**
+	 * Gets the entire list of papers authored
+	 * 
+	 * @return the list of authored papers
+	 */
+	public ArrayList<Papers> getPapers() {
+		return papers;
+	}
+	
+	/**
+	 * Sets the current list of papers to a completely new list
+	 * 
+	 * @param papers - the new list of papers
+	 */
+	public void setPapers(ArrayList<Papers> papers) {
+		this.papers = papers;
+	}
+	
+	/**
+	 * Adds a single paper to the current list of papers
+	 * 
+	 * @param newPaper - the new paper to be added
+	 */
+	public void addPaper(Papers newPaper) {
+		papers.add(newPaper);
+	}
+	
 }
