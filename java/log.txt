@@ -40,3 +40,48 @@ Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using p
 Message:
 Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
 
+Timestamp: Mon May 02 12:43:33 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Mon May 02 12:47:46 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Mon May 02 12:53:39 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Mon May 02 12:57:18 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Mon May 02 12:58:31 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Mon May 02 12:59:06 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Mon May 02 12:59:57 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Mon May 02 13:05:30 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Mon May 02 13:05:57 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
