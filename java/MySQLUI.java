@@ -27,31 +27,11 @@ public class MySQLUI extends JFrame implements ActionListener{
    private JLabel jlWho;
    private JTextField jtfUser;
    private JTextField jtfPass;
-   private JTextField jtfSearch;
-   private JButton jbSearchButton;
    private JButton jbLogIn;
    private JButton jbStudentGuest;
    private JButton jbGo;
-   private JButton jbDelete;
-   private JButton jbSubmit;
    private ButtonGroup bgUsers;
    private String[] theArgs;
-   
-   
-   private JLabel jlTitle;
-   private JLabel jlFirstName;
-   private JLabel jlLastname;
-   private JLabel jlKeywords;
-   private JLabel jlCitation;
-   private JLabel jlAbstract;
-   
-   private JTextField jtfTitle;
-   private JTextField jtfFirstName;
-   private JTextField jtfLastname;
-   private JTextField jtfKeywords;
-   private JTextField jtfCitation;
-   private JTextArea jtaAbstract;
-
    
    /**
     * The font that is used throughout the splash screen.
@@ -66,7 +46,7 @@ public class MySQLUI extends JFrame implements ActionListener{
    public static void main(String [] args){
        msqldb = new MySQLDatabase();
 
-      MySQLUI signIn = new MySQLUI(5);
+      MySQLUI signIn = new MySQLUI();
          signIn.setVisible( true );
          signIn.setSize(300, 300);
          signIn.setLocationRelativeTo( null );
@@ -129,91 +109,8 @@ public class MySQLUI extends JFrame implements ActionListener{
       jbLogIn.addActionListener(this);
       
    }// end of TCSplash Constructor
-   // tester for gui pass login 
-   public MySQLUI(int value){
-       
-	   faculty = populateFaculty(msqldb);
-      jpContainer = new JPanel();                              //Create new JPanel to hold many JPanels that will wait to collect information
-      add( jpContainer );
-     
-      jpMessages = new JPanel(new GridLayout(0, 1, 0, 10));    //Create a JPanel to hold many rows of information
-      jpContainer.add( jpMessages, BorderLayout.CENTER );
-    
-      jpSpace = new JPanel();                                  //Adds a space in the grid
-      jpMessages.add( jpSpace );
-     
-      jpWelcome = new JPanel();
-             
-             
-    //  search bar and button 
-      jlWelcome = new JLabel("Main Search");                      //Add JLabels
-      jlWelcome.setFont( font );
-      jpWelcome.add( jlWelcome );
-        
-      jpMessages.add( jpWelcome );
-     
-      
-      jtfSearch = new JTextField("Enter information");       
-           
-      jpMessages.add( jtfSearch );
-      jbSearchButton = new JButton("Search");
-     
-      jpMessages.add( jbSearchButton );
-     
-      jbSearchButton.addActionListener(this);
-      String[] searchTerms = { "Search by","Title", "KeyWords", "Abstract", "Firstname", "Lastname","Citation" };
-
-   //Create the combo box, select item at index 0 for search by in the combo box.
-    JComboBox jcKeyWords = new JComboBox(searchTerms);
-   jcKeyWords.setSelectedIndex(0);
-   jcKeyWords.addActionListener(this);
-      jpMessages.add(jcKeyWords);
-      
-      
-      // creating bottom half of the page here
-      
-    JLabel jlTitle = new JLabel("Title"); 
-    JLabel jlFirstName = new JLabel("First Name"); 
-    JLabel jlLastname= new JLabel("Last Name");
-    JLabel jlKeywords= new JLabel("Keywords");
-    JLabel jlCitation= new JLabel("Citation");
-    JLabel jlAbstract= new JLabel("Abstract"); 
    
-    JTextField jtfTitle = new JTextField("Title");
-    JTextField jtfFirstName= new JTextField("First Name");
-    JTextField jtfLastname= new JTextField("Last Name");
-    JTextField jtfKeywords= new JTextField("Keywords");
-    JTextField jtfCitation= new JTextField("Citation");
-    JTextArea jtaAbstract= new JTextArea("Abstract");
-    // addin each component label to textfield 
-    jpMessages.add(jlTitle);
-    jpMessages.add(jtfTitle);
-    
-    jpMessages.add(jlFirstName);
-    jpMessages.add(jtfFirstName);
-    
-    jpMessages.add(jlLastname);
-    jpMessages.add(jtfLastname);
-    
-    jpMessages.add(jlKeywords);
-    jpMessages.add(jtfKeywords);
-    
-    jpMessages.add(jlCitation);
-    jpMessages.add(jtfCitation);
-    
-    jpMessages.add(jlAbstract);
-    jpMessages.add(jtaAbstract);
-    // buttons for delete and submit
-   JButton jbDelete = new JButton("Delete");
-   JButton jbSubmit = new JButton("Submit");
-
-    jpMessages.add(jbDelete);
-    jpMessages.add(jbSubmit);
-      
-      // need to add action listners 
-     
-   }// end of TCSplash Constructor
-
+   
    public void actionPerformed(ActionEvent ae){      
       if(ae.getActionCommand() == "Student/Guest"){                    // Wait for someone to push Go!
          System.out.println("Log in button clicked");                       
