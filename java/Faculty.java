@@ -169,4 +169,127 @@ public class Faculty {
 		papers.add(newPaper);
 	}
 	
+	/**
+	 * fetch() will use this object's paperId attribute and the 
+	 * MySQLDatabase class' getData() method to retrieve the database values 
+	 * for this particular paperId and update the other attributes 
+	 * accordingly. 
+	 * 
+	 * **NOTE** For this fetch, be sure to run the populate keywords and authors
+	 *          methods after fetch() so that those arrays are up to date as 
+	 *          well
+	 *          
+	 * @return true if the fetch updated data
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public boolean fetch() {
+		
+		boolean doesFetch = false;
+		
+		//USE this string for a correct select statement
+        String stmnt = "SELECT fname, lname, password, email FROM faculty WHERE "
+        		+ "id = "+facultyId;
+        
+        try {
+			mysqldb.connect();
+		    //execute the SELECT statement and get the results
+		    ArrayList<ArrayList> data = mysqldb.getData(stmnt);
+			
+			//loop through the data array and set the attributes
+		    if(data.size() != 0) {
+				for(ArrayList<String> d: data) {	
+					for(int i=0; i < d.size(); i++) {
+						if(i == 3)
+							setEmail(d.get(i));
+						
+						else if(i == 2)
+						    setPassword(d.get(i));
+						
+						else if(i == 1)
+							setLastName(d.get(i));
+						
+						else
+							setFirstName(d.get(i));
+					}
+				}
+				doesFetch = true;
+			}
+		    else {
+		    	//the data returned an empty set, set all attributes to defaults
+		    	setId(0);
+		    	setFirstName("");
+		    	setLastName("");
+		    	setPassword("");
+		    	setEmail("");
+		    }
+		    mysqldb.close();
+				
+		} catch (DLException e) {
+			System.out.println("Could not complete operation. "
+					+ "Please check log file");
+		}
+        
+        return doesFetch;
+	}//END fetch
+	
+	/**
+	 * put() will update the database values, for this object's facultyId, 
+	 * using all this object's attributes (fName, lName, password, email).
+	 */
+	public void put() {
+		String stmnt = "UPDATE faculty SET fname = '" + fName 
+				+ "', lname = '" + lName
+				+ "', password = '" + password
+				+ "', email = '" + email 
+				+ "' WHERE id = "+facultyId;
+		
+		try {
+			mysqldb.connect();
+			mysqldb.setData(stmnt);
+			mysqldb.close();
+				
+		} catch (DLException e) {
+			System.out.println("Could not complete operation. "
+					+ "Please check log file");
+		}		
+	}//END put
+	
+	/**
+	 * post() will insert this object's attribute values as a new record into 
+	 * the database table.
+	 */
+	public void post() {
+		String stmnt = "INSERT INTO faculty VALUES (" 
+				+ facultyId + ",'" + fName + "','" + lName + "','" + password
+				+ "','" + email + "')";
+		
+		try {
+			mysqldb.connect();
+			mysqldb.setData(stmnt);
+			mysqldb.close();
+				
+		} catch (DLException e) {
+			System.out.println("Could not complete operation. "
+					+ "Please check log file");
+		}
+	}//END post
+	
+	/**
+	 * delete() will remove from the database table any data corresponding to 
+	 * this object's facultyId
+	 */
+	public void delete() {
+		String stmnt = "DELETE FROM faculty WHERE id = " + facultyId;
+		
+		try {
+			mysqldb.connect();
+			mysqldb.setData(stmnt);
+			mysqldb.close();
+				
+		} catch (DLException e) {
+			System.out.println("Could not complete operation. "
+					+ "Please check log file");
+		}	
+	}//END delete
+	
 }

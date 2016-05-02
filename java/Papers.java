@@ -251,8 +251,8 @@ public class Papers {
 	public void put() {
 		String stmnt = "UPDATE papers SET title = '" + title 
 				+ "', abstract = '" + pAbstract
-				+ "', citation = " + citation 
-				+ " WHERE id = "+paperId;
+				+ "', citation = '" + citation 
+				+ "' WHERE id = "+paperId;
 		
 		try {
 			mysqldb.connect();
@@ -271,8 +271,8 @@ public class Papers {
 	 */
 	public void post() {
 		String stmnt = "INSERT INTO papers VALUES (" 
-				+ paperId + ",'" + title + "','" + pAbstract + "',"
-				+ citation + ")";
+				+ paperId + ",'" + title + "','" + pAbstract + "','"
+				+ citation + "')";
 		
 		try {
 			mysqldb.connect();
