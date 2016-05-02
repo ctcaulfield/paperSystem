@@ -18,20 +18,21 @@ public class MySQLUI extends JFrame implements ActionListener{
     */
    private JPanel jpContainer;
    
-   //The JPanel that holds all of the panels other than jpContainer.
    private JPanel jpMessages;  
    private JPanel jpWelcome;
    private JPanel jpSpace; 
    private JPanel jpWho;
    private JLabel jlWelcome;
    private JLabel jlWho;
-   private JTextField jtfUser;
+   private JTextField jtfEmail;
    private JTextField jtfPass;
    private JButton jbLogIn;
    private JButton jbStudentGuest;
    private JButton jbGo;
    private ButtonGroup bgUsers;
    private String[] theArgs;
+   
+   private PaperUI paperView;
    
    /**
     * The font that is used throughout the splash screen.
@@ -87,11 +88,15 @@ public class MySQLUI extends JFrame implements ActionListener{
       jpWho.add( jlWho );
         
       jpMessages.add( jpWho );
+
+      //remove this when finished testing
+      jtfEmail = new JTextField("sjz@it.rit.edu");             // Add the TextField
+      jtfPass = new JTextField("sjz");
         
-      jtfUser = new JTextField("Enter username...");             // Add the TextField
-      jtfPass = new JTextField("Enter password...");
+      //jtfEmail = new JTextField("Enter email...");             // Add the TextField
+      //jtfPass = new JTextField("Enter password...");
      
-      jpMessages.add( jtfUser );
+      jpMessages.add( jtfEmail );
       jpMessages.add( jtfPass ); 
      
     
@@ -115,12 +120,14 @@ public class MySQLUI extends JFrame implements ActionListener{
       if(ae.getActionCommand() == "Student/Guest"){                    // Wait for someone to push Go!
          System.out.println("Log in button clicked");                       
             System.out.println("Open Student/Guest view");
+            paperView = new PaperUI();
             this.dispose();
+            
       }
       else if(ae.getActionCommand() == "Log in"){
          System.out.println("Student/Guest button clicked"); 
          String hashtext = "";
-         String username = jtfUser.getText();
+         String username = jtfEmail.getText();
          String password = jtfPass.getText(); 
     	 MessageDigest m;
 		 try {
@@ -143,11 +150,11 @@ public class MySQLUI extends JFrame implements ActionListener{
          for(Faculty f: faculty) {
              if(f.getEmail().equals(username) && f.getPassword().equals(hashtext)){
                  System.out.println("Open Faculty/Admin view"); 
+                 paperView = new PaperUI(f.getEmail());
                  this.dispose();
              }
 		 }
-         //if survives through loop - nothing was found 
-         System.out.println("Password or username incorrect");  
+ 
       }     
    }// end of actionPerformed
    
