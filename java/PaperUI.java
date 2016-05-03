@@ -7,32 +7,70 @@ import javax.swing.*;
 
 public class PaperUI{
    
+   private JFrame frame;
+   private JPanel searchPanel;
+   private JLabel  searchInfo;
+   private JTextField searchBar;
+   private JComboBox quickSearch;
+   private JButton loginButton;
+   private JPanel tablePanel;
+   private String dataValues[][];
+   private JTable table;
+   private JScrollPane scrollPane;
+   private JPanel infoPanel;
+   private JPanel editPanel;
+   private JButton deleteButton;
+   private JButton editButton;
+   
    //determine user permissions
    private boolean hasAccess;
    private String facultyEmail;
    
-   public PaperUI(){
    
+   
+   public PaperUI(){
+      //
       //create frame
-      JFrame frame = new JFrame();
+      frame = new JFrame();
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setLayout(new BorderLayout());
       frame.setLocationRelativeTo( null );
-      
+      this.createGUI();
+      frame.setSize(700, 450);
+      frame.setVisible(true);
+   }
+   
+   public PaperUI(String facultyEmail){
+      //setup preferences
+      hasAccess = true;
+      this.facultyEmail = facultyEmail;
+      //create frame
+      frame = new JFrame();
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.setLayout(new BorderLayout());
+      frame.setLocationRelativeTo( null ); 
+      this.createGUI();
+      frame.setSize(700, 450);
+      frame.setVisible(true);
+   }
+   
+   
+   public void createGUI(){
+   
       //create search panel
-      JPanel searchPanel = new JPanel();
+      searchPanel = new JPanel();
       searchPanel.setLayout(new FlowLayout());
 
       //search bar
-      JLabel  searchInfo = new JLabel("Enter Information: ", JLabel.RIGHT);
-      JTextField searchBar = new JTextField(15);
+      searchInfo = new JLabel("Enter Information: ", JLabel.RIGHT);
+      searchBar = new JTextField(15);
       
       //quick search bombo box
       String[] searchWords = { "Title", "Keywords", "Abstract","First Name","Last Name","Citation"};
-      JComboBox quickSearch = new JComboBox(searchWords);
+      quickSearch = new JComboBox(searchWords);
       
       //search button
-      JButton loginButton = new JButton("Search");
+      loginButton = new JButton("Search");
       
       
       searchPanel.add(searchBar);
@@ -40,7 +78,7 @@ public class PaperUI{
       searchPanel.add(loginButton);
       frame.add(searchPanel, BorderLayout.NORTH);
       
-      JPanel tablePanel = new JPanel();
+      tablePanel = new JPanel();
       tablePanel.setLayout( new BorderLayout());
       
       //Create columns names
@@ -56,16 +94,16 @@ public class PaperUI{
 		};
 
 		// Create a new table instance
-		JTable table = new JTable( dataValues, columnNames );
+		table = new JTable( dataValues, columnNames );
 
 		// Add the table to a scrolling pane
-		JScrollPane scrollPane = new JScrollPane( table );
+		scrollPane = new JScrollPane( table );
 		tablePanel.add( scrollPane, BorderLayout.CENTER );
 
       frame.add(tablePanel, BorderLayout.CENTER);
             
       //fill information panel 
-      JPanel infoPanel = new JPanel();
+      infoPanel = new JPanel();
       infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));      
       
       //title
@@ -95,26 +133,19 @@ public class PaperUI{
       frame.add(infoPanel, BorderLayout.EAST);
       
       //create edit button panel
-      JPanel editPanel = new JPanel();
+      editPanel = new JPanel();
       editPanel.setLayout(new FlowLayout());
       
-      JButton deleteButton = new JButton("Delete");
+      deleteButton = new JButton("Delete");
       editPanel.add(deleteButton);
       
-      JButton editButton = new JButton("Insert/Update");
+      editButton = new JButton("Insert/Update");
       editPanel.add(editButton);
       
       frame.add(editPanel, BorderLayout.SOUTH);
-      
-
-      frame.setSize(700, 450);
-      frame.setVisible(true);
    }
    
-   public PaperUI(String facultyEmail){
-      hasAccess = true;
-      this.facultyEmail = facultyEmail; 
-   }
+   
 
 }
 
