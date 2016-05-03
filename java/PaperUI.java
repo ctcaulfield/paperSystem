@@ -7,70 +7,32 @@ import javax.swing.*;
 
 public class PaperUI{
    
-   private JFrame frame;
-   private JPanel searchPanel;
-   private JLabel  searchInfo;
-   private JTextField searchBar;
-   private JComboBox quickSearch;
-   private JButton loginButton;
-   private JPanel tablePanel;
-   private String dataValues[][];
-   private JTable table;
-   private JScrollPane scrollPane;
-   private JPanel infoPanel;
-   private JPanel editPanel;
-   private JButton deleteButton;
-   private JButton editButton;
-   
    //determine user permissions
    private boolean hasAccess;
    private String facultyEmail;
    
-   
-   
    public PaperUI(){
-      //
+   
       //create frame
-      frame = new JFrame();
+      JFrame frame = new JFrame();
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setLayout(new BorderLayout());
       frame.setLocationRelativeTo( null );
-      this.createGUI();
-      frame.setSize(700, 450);
-      frame.setVisible(true);
-   }
-   
-   public PaperUI(String facultyEmail){
-      //setup preferences
-      hasAccess = true;
-      this.facultyEmail = facultyEmail;
-      //create frame
-      frame = new JFrame();
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      frame.setLayout(new BorderLayout());
-      frame.setLocationRelativeTo( null ); 
-      this.createGUI();
-      frame.setSize(700, 450);
-      frame.setVisible(true);
-   }
-   
-   
-   public void createGUI(){
-   
+      
       //create search panel
-      searchPanel = new JPanel();
+      JPanel searchPanel = new JPanel();
       searchPanel.setLayout(new FlowLayout());
 
       //search bar
-      searchInfo = new JLabel("Enter Information: ", JLabel.RIGHT);
-      searchBar = new JTextField(15);
+      JLabel  searchInfo = new JLabel("Enter Information: ", JLabel.RIGHT);
+      JTextField searchBar = new JTextField(15);
       
       //quick search bombo box
       String[] searchWords = { "Title", "Keywords", "Abstract","First Name","Last Name","Citation"};
-      quickSearch = new JComboBox(searchWords);
+      JComboBox quickSearch = new JComboBox(searchWords);
       
       //search button
-      loginButton = new JButton("Search");
+      JButton loginButton = new JButton("Search");
       
       
       searchPanel.add(searchBar);
@@ -78,7 +40,7 @@ public class PaperUI{
       searchPanel.add(loginButton);
       frame.add(searchPanel, BorderLayout.NORTH);
       
-      tablePanel = new JPanel();
+      JPanel tablePanel = new JPanel();
       tablePanel.setLayout( new BorderLayout());
       
       //Create columns names
@@ -94,16 +56,16 @@ public class PaperUI{
 		};
 
 		// Create a new table instance
-		table = new JTable( dataValues, columnNames );
+		JTable table = new JTable( dataValues, columnNames );
 
 		// Add the table to a scrolling pane
-		scrollPane = new JScrollPane( table );
+		JScrollPane scrollPane = new JScrollPane( table );
 		tablePanel.add( scrollPane, BorderLayout.CENTER );
 
       frame.add(tablePanel, BorderLayout.CENTER);
             
       //fill information panel 
-      infoPanel = new JPanel();
+      JPanel infoPanel = new JPanel();
       infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));      
       
       //title
@@ -133,19 +95,26 @@ public class PaperUI{
       frame.add(infoPanel, BorderLayout.EAST);
       
       //create edit button panel
-      editPanel = new JPanel();
+      JPanel editPanel = new JPanel();
       editPanel.setLayout(new FlowLayout());
       
-      deleteButton = new JButton("Delete");
+      JButton deleteButton = new JButton("Delete");
       editPanel.add(deleteButton);
       
-      editButton = new JButton("Insert/Update");
+      JButton editButton = new JButton("Insert/Update");
       editPanel.add(editButton);
       
       frame.add(editPanel, BorderLayout.SOUTH);
+      
+
+      frame.setSize(700, 450);
+      frame.setVisible(true);
    }
    
-   
+   public PaperUI(String facultyEmail){
+      hasAccess = true;
+      this.facultyEmail = facultyEmail; 
+   }
 
 }
 
