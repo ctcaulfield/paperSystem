@@ -1,18 +1,19 @@
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 /**
  * @author Christopher Caulfield
  */
 
-public class PaperUI{
+public class PaperUI implements ActionListener{
    
    private JFrame frame;
    private JPanel searchPanel;
    private JLabel  searchInfo;
    private JTextField searchBar;
    private JComboBox quickSearch;
-   private JButton loginButton;
+   private JButton searchButton;
    private JPanel tablePanel;
    private String dataValues[][];
    private JTable table;
@@ -23,7 +24,15 @@ public class PaperUI{
    private JButton editButton;
    private JTextArea textArea;
    private JScrollPane scrollArea;
+   private JTextField titleField;
+   private JTextField firstNameField;
+   private JTextField lastNameField;
+   private JTextField keywordsField;
+   private JTextField citationField;
+   private JTextArea authorTextArea;
+   private JScrollPane authorScrollArea;
    
+      
    //determine user permissions
    private boolean hasAccess;
    private String facultyEmail;
@@ -72,12 +81,16 @@ public class PaperUI{
       quickSearch = new JComboBox(searchWords);
       
       //search button
-      loginButton = new JButton("Search");
+      searchButton = new JButton("Search");
       
       
       searchPanel.add(searchBar);
       searchPanel.add(quickSearch);
-      searchPanel.add(loginButton);
+      searchPanel.add(searchButton);
+      
+      //action listener
+      searchButton.addActionListener(this);
+      
       frame.add(searchPanel, BorderLayout.NORTH);
       
       tablePanel = new JPanel();
@@ -110,27 +123,31 @@ public class PaperUI{
       
       //title
       infoPanel.add(new JLabel("Title: ", JLabel.RIGHT));
-      infoPanel.add(new JTextField());
+      titleField = new JTextField();
+      infoPanel.add(titleField);
+     
+     //Author
+      authorTextArea = new JTextArea(20,25);
+      authorScrollArea = new JScrollPane(authorTextArea);
       
-      //first name
-      infoPanel.add(new JLabel("First Name: ", JLabel.RIGHT));
-      infoPanel.add(new JTextField());
-     
-      //last name 
-      infoPanel.add(new JLabel("Last Name: ", JLabel.RIGHT));
-      infoPanel.add(new JTextField()); 
-     
-      //keywords name 
+      infoPanel.add(new JLabel("Author: ", JLabel.RIGHT));
+      infoPanel.add(authorScrollArea);
+      
+      //keywords
       infoPanel.add(new JLabel("Keywords: ", JLabel.RIGHT));
-      infoPanel.add(new JTextField()); 
+      keywordsField = new JTextField();
+      infoPanel.add(keywordsField);
+      
       
       //Citation 
       infoPanel.add(new JLabel("Citation: ", JLabel.RIGHT));
-      infoPanel.add(new JTextField()); 
+      citationField = new JTextField();
+      infoPanel.add(citationField); 
       
-      textArea = new JTextArea(20,15);
-      scrollArea = new JScrollPane(textArea);
       //Abstract
+      textArea = new JTextArea(20,25);
+      scrollArea = new JScrollPane(textArea);
+      
       infoPanel.add(new JLabel("Abstract: ", JLabel.RIGHT));
       infoPanel.add(scrollArea);
       
@@ -140,14 +157,42 @@ public class PaperUI{
       editPanel = new JPanel();
       editPanel.setLayout(new FlowLayout());
       
-      deleteButton = new JButton("Delete");
-      editPanel.add(deleteButton);
-      
-      editButton = new JButton("Insert/Update");
-      editPanel.add(editButton);
-      
+      if(hasAccess == true){
+         deleteButton = new JButton("Delete");
+         editPanel.add(deleteButton);
+         deleteButton.addActionListener(this);
+         
+         editButton = new JButton("Insert/Update");
+         editPanel.add(editButton);
+         editButton.addActionListener(this);
+      }
+      else{
+         titleField.setEditable(false);
+         firstNameField.setEditable(false);
+         lastNameField.setEditable(false);
+         keywordsField.setEditable(false);
+         citationField.setEditable(false);
+         textArea.setEditable(false);
+      }
+     
       frame.add(editPanel, BorderLayout.SOUTH);
    }
+   
+   
+   //actionPerformed
+   public void actionPerformed(ActionEvent ae){      
+      if(ae.getActionCommand() == "Delete"){                    // Wait for someone to push Go!
+         System.out.println("Delete selected");
+      }
+      else if(ae.getActionCommand() == "Insert/Update"){
+         System.out.println("Insert/Update selected");
+      }  
+      else if(ae.getActionCommand() == "Search"){
+         System.out.println("Search selected");
+ 
+      }    
+   }// end of actionPerformed
+
    
    
 

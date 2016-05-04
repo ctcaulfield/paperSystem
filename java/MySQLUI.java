@@ -83,7 +83,7 @@ public class MySQLUI extends JFrame implements ActionListener{
      
       jpWho = new JPanel();
        
-      jlWho = new JLabel("Please log in");                      // Add Label "Who are you"
+      jlWho = new JLabel("Please log in");                      // Add Label "please log in"
       jlWho.setFont( font );
       jpWho.add( jlWho );
         
@@ -101,23 +101,19 @@ public class MySQLUI extends JFrame implements ActionListener{
      
     
       jbStudentGuest = new JButton("Student/Guest");
-     
       jpMessages.add( jbStudentGuest );
-     
       jbStudentGuest.addActionListener(this);
 
 
       jbLogIn = new JButton("Log in");
-     
       jpMessages.add( jbLogIn );
-     
       jbLogIn.addActionListener(this);
       
-   }// end of TCSplash Constructor
+   }// end of MySQLUI constructor
    
    
    public void actionPerformed(ActionEvent ae){      
-      if(ae.getActionCommand() == "Student/Guest"){                    // Wait for someone to push Go!
+      if(ae.getActionCommand() == "Student/Guest"){                    // Wait for someone to push their selection
          System.out.println("Log in button clicked");                       
             System.out.println("Open Student/Guest view");
             paperView = new PaperUI();
