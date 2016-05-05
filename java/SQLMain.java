@@ -40,6 +40,11 @@ public class SQLMain {
 				System.out.print(f.getLastName() + ". ");
 			}
 			System.out.println("\n");
+			p.fetch();
+			p.put();
+			Papers pap = new Papers(34,"sdfg","sdfg","sdfgr");
+			pap.post();
+			pap.delete();
 		}
 			
 	}//END main
