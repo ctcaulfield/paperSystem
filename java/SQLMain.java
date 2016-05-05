@@ -27,6 +27,11 @@ public class SQLMain {
 				System.out.println("ID: " + p.getId());
 			}
 			System.out.println();
+			f.fetch();
+			f.put();
+			Faculty fac = new Faculty(3,"Boob","Dinger","rtrth","fghfgh");
+			fac.post();
+			fac.delete();
 		}
 		for(Papers p: research) {
 			System.out.println(p.getId() + ": " + p.getKeywords());
@@ -66,7 +71,7 @@ public class SQLMain {
 				String password = l.get(3);
 				String email = l.get(4);
 				Faculty newF = new Faculty(id, fName, lName, password, email);
-				faculty.add(newF);			
+				faculty.add(newF);		
 			}
 			sql.close();
 			
