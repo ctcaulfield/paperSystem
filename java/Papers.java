@@ -204,12 +204,14 @@ public class Papers {
 		
 		//USE this string for a correct select statement
         String stmnt = "SELECT title, abstract, citation FROM papers WHERE "
-        		+ "id = "+paperId;
+        		+ "id = ?";
+        ArrayList<String> values = new ArrayList<>(1);
+        values.add(Integer.toString(paperId));
         
         try {
 			mysqldb.connect();
 		    //execute the SELECT statement and get the results
-		    ArrayList<ArrayList> data = mysqldb.getData(stmnt);
+		    ArrayList<ArrayList> data = mysqldb.getData(stmnt, values);
 			
 			//loop through the data array and set the attributes
 		    if(data.size() != 0) {
@@ -249,14 +251,17 @@ public class Papers {
 	 * using all this object's attributes (title, abstract, citation).
 	 */
 	public void put() {
-		String stmnt = "UPDATE papers SET title = '" + title 
-				+ "', abstract = '" + pAbstract
-				+ "', citation = '" + citation 
-				+ "' WHERE id = "+paperId;
+		String stmnt = "UPDATE papers SET title = ?, abstract = ?, citation = ?" 
+				+ " WHERE id = ?";
+		ArrayList<String> values = new ArrayList<>(4);
+		values.add(title);
+		values.add(pAbstract);
+		values.add(citation);
+		values.add(Integer.toString(paperId));
 		
 		try {
 			mysqldb.connect();
-			mysqldb.setData(stmnt);
+			mysqldb.setData(stmnt, values);
 			mysqldb.close();
 				
 		} catch (DLException e) {
@@ -270,13 +275,16 @@ public class Papers {
 	 * the database table.
 	 */
 	public void post() {
-		String stmnt = "INSERT INTO papers VALUES (" 
-				+ paperId + ",'" + title + "','" + pAbstract + "','"
-				+ citation + "')";
+		String stmnt = "INSERT INTO papers VALUES (?,?,?,?)";
+		ArrayList<String> values = new ArrayList<>(4);
+		values.add(Integer.toString(paperId));
+		values.add(title);
+		values.add(pAbstract);
+		values.add(citation);
 		
 		try {
 			mysqldb.connect();
-			mysqldb.setData(stmnt);
+			mysqldb.setData(stmnt, values);
 			mysqldb.close();
 				
 		} catch (DLException e) {

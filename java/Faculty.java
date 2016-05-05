@@ -188,12 +188,14 @@ public class Faculty {
 		
 		//USE this string for a correct select statement
         String stmnt = "SELECT fname, lname, password, email FROM faculty WHERE "
-        		+ "id = "+facultyId;
+        		+ "id = ?";
+        ArrayList<String> values = new ArrayList<>(1);
+        values.add(Integer.toString(facultyId));
         
         try {
 			mysqldb.connect();
 		    //execute the SELECT statement and get the results
-		    ArrayList<ArrayList> data = mysqldb.getData(stmnt);
+		    ArrayList<ArrayList> data = mysqldb.getData(stmnt, values);
 			
 			//loop through the data array and set the attributes
 		    if(data.size() != 0) {
@@ -237,15 +239,18 @@ public class Faculty {
 	 * using all this object's attributes (fName, lName, password, email).
 	 */
 	public void put() {
-		String stmnt = "UPDATE faculty SET fname = '" + fName 
-				+ "', lname = '" + lName
-				+ "', password = '" + password
-				+ "', email = '" + email 
-				+ "' WHERE id = "+facultyId;
+		String stmnt = "UPDATE faculty SET fname = ?, lname = ?, password = ?, "
+				+ "email = ? WHERE id = ?";
+		ArrayList<String> values = new ArrayList<>(5);
+		values.add(fName);
+		values.add(lName);
+		values.add(password);
+		values.add(email);
+		values.add(Integer.toString(facultyId));
 		
 		try {
 			mysqldb.connect();
-			mysqldb.setData(stmnt);
+			mysqldb.setData(stmnt,values);
 			mysqldb.close();
 				
 		} catch (DLException e) {
@@ -259,13 +264,17 @@ public class Faculty {
 	 * the database table.
 	 */
 	public void post() {
-		String stmnt = "INSERT INTO faculty VALUES (" 
-				+ facultyId + ",'" + fName + "','" + lName + "','" + password
-				+ "','" + email + "')";
+		String stmnt = "INSERT INTO faculty VALUES (?,?,?,?,?)";
+		ArrayList<String> values = new ArrayList<>(5);
+		values.add(Integer.toString(facultyId));
+		values.add(fName);
+		values.add(lName);
+		values.add(password);
+		values.add(email);
 		
 		try {
 			mysqldb.connect();
-			mysqldb.setData(stmnt);
+			mysqldb.setData(stmnt, values);
 			mysqldb.close();
 				
 		} catch (DLException e) {
@@ -279,11 +288,13 @@ public class Faculty {
 	 * this object's facultyId
 	 */
 	public void delete() {
-		String stmnt = "DELETE FROM faculty WHERE id = " + facultyId;
+		String stmnt = "DELETE FROM faculty WHERE id = ?";
+		ArrayList<String> values = new ArrayList<>(1);
+		values.add(Integer.toString(facultyId));
 		
 		try {
 			mysqldb.connect();
-			mysqldb.setData(stmnt);
+			mysqldb.setData(stmnt, values);
 			mysqldb.close();
 				
 		} catch (DLException e) {
