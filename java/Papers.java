@@ -13,7 +13,7 @@ public class Papers {
 	private String pAbstract;
 	private String citation;
 	private ArrayList<String> keywords;
-	private ArrayList<Faculty> author;
+	private ArrayList<Faculty> authors;
 	private MySQLDatabase mysqldb;
 	
 	/**
@@ -21,6 +21,9 @@ public class Papers {
 	 */
 	public Papers() {
 		mysqldb = new MySQLDatabase();
+		authors = new ArrayList<>();
+		keywords = new ArrayList<>();
+		
 	}//END constructor
 	
 	/**
@@ -30,6 +33,9 @@ public class Papers {
 	 */
 	public Papers(int paperId) {
 		this.paperId = paperId;
+		mysqldb = new MySQLDatabase();
+		authors = new ArrayList<>();
+		keywords = new ArrayList<>();
 		
 	}//END contructor2
 	
@@ -48,6 +54,8 @@ public class Papers {
 		this.pAbstract = pAbstract;
 		this.citation = citation;
 		mysqldb = new MySQLDatabase();
+		authors = new ArrayList<>();
+		keywords = new ArrayList<>();
 		
 	}//END constructor3
 	
@@ -122,5 +130,177 @@ public class Papers {
 	public void setCitation(String citation) {
 		this.citation = citation;
 	}
+	
+	/**
+	 * Returns the list of authors for this paper
+	 * 
+	 * @return the list of authors
+	 */
+	public ArrayList<Faculty> getAuthors() {
+		return authors;
+	}
+	
+	/**
+	 * Sets the current authors list to a new list of authors
+	 * 
+	 * @param authors - the new list of authors
+	 */
+	public void setAuthors(ArrayList<Faculty> authors) {
+		this.authors = authors;
+	}
+	
+	/**
+	 * Adds a single author to the current list of authors
+	 * 
+	 * @param newAuthor - the new author to be added to the list
+	 */
+	public void addAuthor(Faculty newAuthor) {
+		authors.add(newAuthor);
+	}
+	
+	/**
+	 * Gets the whole list of keywords
+	 * 
+	 * @return - the list of keywords
+	 */
+	public ArrayList<String> getKeywords() {
+		return keywords;
+	}
+	
+	/**
+	 * Sets the current list of keywords to a new list
+	 * 
+	 * @param keywords - the new list of keywords
+	 */
+	public void setKeywords(ArrayList<String> keywords) {
+		this.keywords = keywords;
+	}
+	
+	/**
+	 * Adds a single keyword to the keywords list
+	 * 
+	 * @param keyword - the new keyword to be added
+	 */
+	public void addKeyword(String keyword) {
+		keywords.add(keyword);
+	}
+	
+	/**
+	 * fetch() will use this object's paperId attribute and the 
+	 * MySQLDatabase class' getData() method to retrieve the database values 
+	 * for this particular paperId and update the other attributes 
+	 * accordingly. 
+	 * 
+	 * **NOTE** For this fetch, be sure to run the populate keywords and authors
+	 *          methods after fetch() so that those arrays are up to date as 
+	 *          well
+	 *          
+	 * @return true if the fetch updated data
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public boolean fetch() {
+		
+		boolean doesFetch = false;
+		
+		//USE this string for a correct select statement
+        String stmnt = "SELECT title, abstract, citation FROM papers WHERE "
+        		+ "id = "+paperId;
+        
+        try {
+			mysqldb.connect();
+		    //execute the SELECT statement and get the results
+		    ArrayList<ArrayList> data = mysqldb.getData(stmnt);
+			
+			//loop through the data array and set the attributes
+		    if(data.size() != 0) {
+				for(ArrayList<String> d: data) {	
+					for(int i=0; i < d.size(); i++) {
+						if(i == 2)
+							setCitation(d.get(i));
+						
+						else if(i == 1)
+						    setAbstract(d.get(i));
+						
+						else
+							setTitle(d.get(i));
+					}
+				}
+				doesFetch = true;
+			}
+		    else {
+		    	//the data returned an empty set, set all attributes to defaults
+		    	setId(0);
+		    	setTitle("");
+		    	setAbstract("");
+		    	setCitation("");
+		    }
+		    mysqldb.close();
+				
+		} catch (DLException e) {
+			System.out.println("Could not complete operation. "
+					+ "Please check log file");
+		}
+        
+        return doesFetch;
+	}//END fetch
+	
+	/**
+	 * put() will update the database values, for this object's paperId, 
+	 * using all this object's attributes (title, abstract, citation).
+	 */
+	public void put() {
+		String stmnt = "UPDATE papers SET title = '" + title 
+				+ "', abstract = '" + pAbstract
+				+ "', citation = '" + citation 
+				+ "' WHERE id = "+paperId;
+		
+		try {
+			mysqldb.connect();
+			mysqldb.setData(stmnt);
+			mysqldb.close();
+				
+		} catch (DLException e) {
+			System.out.println("Could not complete operation. "
+					+ "Please check log file");
+		}		
+	}//END put
+	
+	/**
+	 * post() will insert this object's attribute values as a new record into 
+	 * the database table.
+	 */
+	public void post() {
+		String stmnt = "INSERT INTO papers VALUES (" 
+				+ paperId + ",'" + title + "','" + pAbstract + "','"
+				+ citation + "')";
+		
+		try {
+			mysqldb.connect();
+			mysqldb.setData(stmnt);
+			mysqldb.close();
+				
+		} catch (DLException e) {
+			System.out.println("Could not complete operation. "
+					+ "Please check log file");
+		}
+	}//END post
+	
+	/**
+	 * delete() will remove from the database table any data corresponding to 
+	 * this object's paperId
+	 */
+	public void delete() {
+		String stmnt = "DELETE FROM papers WHERE id = " + paperId;
+		
+		try {
+			mysqldb.connect();
+			mysqldb.setData(stmnt);
+			mysqldb.close();
+				
+		} catch (DLException e) {
+			System.out.println("Could not complete operation. "
+					+ "Please check log file");
+		}	
+	}//END delete
 }
 

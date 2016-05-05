@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Error Log:
 
 Timestamp: Thu Apr 14 22:18:07 EDT 2016
@@ -81,6 +82,43 @@ Message:
 Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
 
 Timestamp: Mon May 02 13:05:57 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+=======
+>>>>>>> origin/master
+Timestamp: Wed May 04 20:08:45 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Wed May 04 20:09:03 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Wed May 04 20:13:54 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Wed May 04 20:18:30 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Thu May 05 08:21:37 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Thu May 05 08:24:04 EDT 2016
+Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+Message:
+Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
+
+Timestamp: Thu May 05 08:24:17 EDT 2016
 Error: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
 Message:
 Could not connect to databasejdbc:mysql://127.0.0.1/484project?useSSL=false
