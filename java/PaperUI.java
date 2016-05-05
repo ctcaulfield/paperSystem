@@ -68,7 +68,13 @@ public class PaperUI implements ActionListener{
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setLayout(new BorderLayout());
       frame.setLocationRelativeTo( null );
-      model = new DefaultTableModel();
+      model = new DefaultTableModel(){
+    	  //make it so the cells are not editable
+    	  @Override
+  	      public boolean isCellEditable(int row, int column) {
+  	         return false;
+  	      }
+      };
       this.createGUI();
       frame.setSize(800, 550);
       frame.setVisible(true);
@@ -93,8 +99,15 @@ public class PaperUI implements ActionListener{
       frame = new JFrame();
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setLayout(new BorderLayout());
-      frame.setLocationRelativeTo( null ); 
-      model = new DefaultTableModel();
+      frame.setLocationRelativeTo( null );
+      //make it so the cells are not editable
+      model = new DefaultTableModel(){
+    	  @Override
+    	  public boolean isCellEditable(int row, int column) {
+    	     //all cells false
+    	     return false;
+    	  }
+      };
       this.createGUI();
       frame.setSize(700, 450);
       frame.setVisible(true);
@@ -319,13 +332,13 @@ public class PaperUI implements ActionListener{
    //actionPerformed
    public void actionPerformed(ActionEvent ae){ 
 	   
-      if(ae.getActionCommand() == "Delete"){                    // Wait for someone to push Go!
+      if(ae.getActionCommand().equalsIgnoreCase("Delete")){                    // Wait for someone to push Go!
          System.out.println("Delete selected");
       }
-      else if(ae.getActionCommand() == "Insert/Update"){
+      else if(ae.getActionCommand().equalsIgnoreCase("Insert/Update")){
          System.out.println("Insert/Update selected");
       }  
-      else if(ae.getActionCommand() == "Search"){
+      else if(ae.getActionCommand().equalsIgnoreCase("Search")){
     	  model.setRowCount(0);
          System.out.println("Search selected");
          String searchString = searchBar.getText();
@@ -334,88 +347,107 @@ public class PaperUI implements ActionListener{
          for(Papers p: research) {
         	 String[] rowValues = new String[6];
         	 ArrayList<Faculty> authors = p.getAuthors();
+        	 //IF the search criteria is by title
         	 if(searchCriteria.equalsIgnoreCase(TITLE)) {
         		 //IF the search word/s are in a title
-        		 if(p.getTitle().contains(searchString)) {
+        		 if(p.getTitle().toLowerCase().contains(searchString.toLowerCase())) {
         			 rowValues = setRow(p, authors);
         		 }
         	 }
+        	 //IF the search criteria is by keywords
         	 else if(searchCriteria.equalsIgnoreCase(KEY)) {
         		 ArrayList<String> keywords = p.getKeywords();
         		 for(String s: keywords) {
-        			 if(s.contains(searchString)) {
+        			 if(s.toLowerCase().contains(searchString.toLowerCase())) {
         				 rowValues = setRow(p, authors);
         				 break;
         			 }
         		 }
         	 }
+        	 //IF the search criteria is by abstracts
         	 else if(searchCriteria.equalsIgnoreCase(ABS)) {
-        		 if(p.getAbstract().contains(searchString)) {
+        		 if(p.getAbstract().toLowerCase().contains(searchString.toLowerCase())) {
         			 rowValues = setRow(p, authors);
         		 }
         	 }
+        	 //IF the search criteria is by first names
         	 else if(searchCriteria.equalsIgnoreCase(FN)) {
         		 for(Faculty f: authors) {
-        			 if(f.getFirstName().contains(searchString)) {
+        			 if(f.getFirstName().toLowerCase().contains(searchString.toLowerCase())) {
         				 rowValues = setRow(p, authors);
         				 break;
         			 }
         		 }
         	 }
+        	 //IF the search criteria is by last names
         	 else if(searchCriteria.equalsIgnoreCase(LN)) {
         		 for(Faculty f: authors) {
-        			 if(f.getLastName().contains(searchString)) {
+        			 if(f.getLastName().toLowerCase().contains(searchString.toLowerCase())) {
         				 rowValues = setRow(p, authors);
         				 break;
         			 }
         		 }
         	 }
+        	 //IF the search criteria is by the citations
         	 else if(searchCriteria.equalsIgnoreCase(CIT)) {
-        		 if(p.getCitation().contains(searchString)) {
+        		 if(p.getCitation().toLowerCase().contains(searchString.toLowerCase())) {
         			 rowValues = setRow(p, authors);
         		 }
         	 }
+        	 //ELSE no match exists: currently wrong
         	 else
         		 JOptionPane.showMessageDialog(null, "No results matched your query", 
             			 "", JOptionPane.ERROR_MESSAGE);
         	 
-        	 model.addRow(rowValues);
+        	 //add the new row 
+        	 try {
+        	     rowValues[0].equals("");
+        	     model.addRow(rowValues);
+        	 } catch(NullPointerException npe) {
+        		 System.out.println("No data, skip this line.");
+        	 }
  		 }
          //model.removeRow(0);
       }   
    }// end of actionPerformed
 
+   /**
+    * 
+    * @param p
+    * @param authorList
+    * @return
+    */
    private String[] setRow(Papers p, ArrayList<Faculty> authorList) {
 	   String[] rowValues = new String[6];
 	   ArrayList<Faculty> authors = authorList;
-		 String fName = "";
-		 String lName = "";
-		 String email = "";
-		 for(Faculty f: authors) {
-			 fName += f.getFirstName() + " ";
-			 lName += f.getLastName() +  " ";
-			 email += f.getEmail() + " ";
-		 }
-		 for(int j=0; j<table.getColumnCount(); j++) {
-			 switch(j) {
-			 	case 0: rowValues[j] = p.getTitle();
-			 			break;
+	   String fName = "";
+	   String lName = "";
+	   String email = "";
+	   for(Faculty f: authors) {
+	       fName += f.getFirstName() + " ";
+	       lName += f.getLastName() +  " ";
+	       email += f.getEmail() + " ";
+	   }
+	   for(int j=0; j<table.getColumnCount(); j++) {
+	       switch(j) {
+		       case 0: rowValues[j] = p.getTitle();
+			 		   break;
 			 	
-			 	case 1: rowValues[j] = fName;
-			 			break;
+			   case 1: rowValues[j] = fName;
+			 		   break;
 			 	
-			 	case 2: rowValues[j] = lName;
-			 			break;
+			   case 2: rowValues[j] = lName;
+			 		   break;
 			 	
-			 	case 3: rowValues[j] = p.getAbstract();
-			 			break;
+			   case 3: rowValues[j] = p.getAbstract();
+			 		   break;
 			 	
-			 	case 4: rowValues[j] = p.getCitation();
-			 			break;
+			   case 4: rowValues[j] = p.getCitation();
+			 		   break;
 			 	
-			 	case 5: rowValues[j] = email;
+			   case 5: rowValues[j] = email;
 			 }
-		 }
+	   }
 	   return rowValues;
    }
    
