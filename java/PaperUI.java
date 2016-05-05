@@ -1,19 +1,21 @@
 import java.awt.*;
-import java.awt.event.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 /**
  * @author Christopher Caulfield
+ * @author Ian Kitchen
  */
 
-public class PaperUI implements ActionListener{
+public class PaperUI{
    
    private JFrame frame;
    private JPanel searchPanel;
    private JLabel  searchInfo;
    private JTextField searchBar;
    private JComboBox quickSearch;
-   private JButton searchButton;
+   private JButton loginButton;
    private JPanel tablePanel;
    private String dataValues[][];
    private JTable table;
@@ -24,23 +26,28 @@ public class PaperUI implements ActionListener{
    private JButton editButton;
    private JTextArea textArea;
    private JScrollPane scrollArea;
-   private JTextField titleField;
-   private JTextField firstNameField;
-   private JTextField lastNameField;
-   private JTextField keywordsField;
-   private JTextField citationField;
-   private JTextArea authorTextArea;
-   private JScrollPane authorScrollArea;
    
-      
    //determine user permissions
    private boolean hasAccess;
    private String facultyEmail;
    
+   //data layer
+   private MySQLDatabase msqldb;
    
-   
-   public PaperUI(){
-      //
+   //data structures
+   private ArrayList<Faculty> faculty = new ArrayList<>();
+   private ArrayList<Papers> research = new ArrayList<>();
+		   
+   public PaperUI(ArrayList<Faculty> faculty){
+	  //instantiate the data layer
+      msqldb = new MySQLDatabase();
+      
+      //populate data structures
+      this.faculty = faculty;
+      research = populatePapers();
+      papersToAuthors();
+      populateKeywords();
+	   
       //create frame
       frame = new JFrame();
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,10 +58,20 @@ public class PaperUI implements ActionListener{
       frame.setVisible(true);
    }
    
-   public PaperUI(String facultyEmail){
+   public PaperUI(String facultyEmail, ArrayList<Faculty> faculty){
       //setup preferences
       hasAccess = true;
       this.facultyEmail = facultyEmail;
+      
+      //instantiate the data layer
+      msqldb = new MySQLDatabase();
+      
+      //populate data structures
+      this.faculty = faculty;
+      research = populatePapers();
+      papersToAuthors();
+      populateKeywords();
+      
       //create frame
       frame = new JFrame();
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,16 +98,12 @@ public class PaperUI implements ActionListener{
       quickSearch = new JComboBox(searchWords);
       
       //search button
-      searchButton = new JButton("Search");
+      loginButton = new JButton("Search");
       
       
       searchPanel.add(searchBar);
       searchPanel.add(quickSearch);
-      searchPanel.add(searchButton);
-      
-      //action listener
-      searchButton.addActionListener(this);
-      
+      searchPanel.add(loginButton);
       frame.add(searchPanel, BorderLayout.NORTH);
       
       tablePanel = new JPanel();
@@ -123,31 +136,27 @@ public class PaperUI implements ActionListener{
       
       //title
       infoPanel.add(new JLabel("Title: ", JLabel.RIGHT));
-      titleField = new JTextField();
-      infoPanel.add(titleField);
+      infoPanel.add(new JTextField());
+      
+      //first name
+      infoPanel.add(new JLabel("First Name: ", JLabel.RIGHT));
+      infoPanel.add(new JTextField());
      
-     //Author
-      authorTextArea = new JTextArea(20,25);
-      authorScrollArea = new JScrollPane(authorTextArea);
-      
-      infoPanel.add(new JLabel("Author: ", JLabel.RIGHT));
-      infoPanel.add(authorScrollArea);
-      
-      //keywords
+      //last name 
+      infoPanel.add(new JLabel("Last Name: ", JLabel.RIGHT));
+      infoPanel.add(new JTextField()); 
+     
+      //keywords name 
       infoPanel.add(new JLabel("Keywords: ", JLabel.RIGHT));
-      keywordsField = new JTextField();
-      infoPanel.add(keywordsField);
-      
+      infoPanel.add(new JTextField()); 
       
       //Citation 
       infoPanel.add(new JLabel("Citation: ", JLabel.RIGHT));
-      citationField = new JTextField();
-      infoPanel.add(citationField); 
+      infoPanel.add(new JTextField()); 
       
-      //Abstract
-      textArea = new JTextArea(20,25);
+      textArea = new JTextArea(20,15);
       scrollArea = new JScrollPane(textArea);
-      
+      //Abstract
       infoPanel.add(new JLabel("Abstract: ", JLabel.RIGHT));
       infoPanel.add(scrollArea);
       
@@ -157,46 +166,129 @@ public class PaperUI implements ActionListener{
       editPanel = new JPanel();
       editPanel.setLayout(new FlowLayout());
       
-      if(hasAccess == true){
-         deleteButton = new JButton("Delete");
-         editPanel.add(deleteButton);
-         deleteButton.addActionListener(this);
-         
-         editButton = new JButton("Insert/Update");
-         editPanel.add(editButton);
-         editButton.addActionListener(this);
-      }
-      else{
-         titleField.setEditable(false);
-         firstNameField.setEditable(false);
-         lastNameField.setEditable(false);
-         keywordsField.setEditable(false);
-         citationField.setEditable(false);
-         textArea.setEditable(false);
-      }
-     
+      deleteButton = new JButton("Delete");
+      editPanel.add(deleteButton);
+      
+      editButton = new JButton("Insert/Update");
+      editPanel.add(editButton);
+      
       frame.add(editPanel, BorderLayout.SOUTH);
    }
    
+    /**
+     * Loads the papers data structure with the results from the database
+	 * 
+	 * @return a list of paper objects
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private ArrayList<Papers> populatePapers() {
+		
+		ArrayList<Papers> research = new ArrayList<>();
+		
+		try {
+			msqldb.connect();
+			
+			//create an SQL statement and execute it
+			String stmnt = "SELECT * FROM papers";
+			ArrayList<ArrayList> resultsTable = msqldb.getData(stmnt);
+			
+			//for each row of the data returned, create a paper object and store
+			//it in an array
+			for(ArrayList<String> l: resultsTable) {
+				int id = Integer.parseInt(l.get(0));
+				String title = l.get(1);
+				String pAbstract = l.get(2);
+				String citation = l.get(3);
+				Papers paper = new Papers(id, title, pAbstract, citation);
+				research.add(paper);
+			}
+			msqldb.close();
+			
+		} catch (DLException e) {
+			e.printStackTrace();
+		}
+		return research;
+	}//END populate papers
+	
+	/**
+	 * Associates papers to authors and vice versa based on which author/s
+	 * participate in writing a specific paper. 
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked"})
+	private void papersToAuthors() {
+		try {
+			//FOR each faculty object
+			for(Faculty facultyObj: faculty) {
+				//list of papers for this faculty object
+				ArrayList<Papers> authored = new ArrayList<>();
+				msqldb.connect();
+				
+				//create the SQL statement and execute it
+				String stmnt = "SELECT papers.id FROM papers JOIN authorship ON "
+						+ "papers.id = paperid JOIN faculty ON facultyid = "
+						+ "faculty.id WHERE faculty.id = "+facultyObj.getId();
+				ArrayList<ArrayList> paperList = msqldb.getData(stmnt);
+				
+				//for each row in the data set returned
+				for(ArrayList<String> dataSet: paperList) {
+					//for each paper object
+					for(Papers paperObj: research) {
+						//IF the paperID in the data set is equal to the current
+						//paper object's ID, then the current faculty object is
+						//the author of the paper
+						if(Integer.parseInt(dataSet.get(0)) == paperObj.getId()) {
+							authored.add(paperObj);
+							
+							//add author to the paper object's authors array
+							paperObj.addAuthor(facultyObj);
+							break;
+						}
+					}
+				}
+				//set the current the papers authored attribute of the faculty 
+				//object
+				facultyObj.setPapers(authored);
+				msqldb.close();
+			}
+		} catch (DLException e) {
+			e.printStackTrace();
+		}
+	}//END papersToAuthors
+	
+	/**
+	 * 
+	 * @param sql
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void populateKeywords() {
+		try {
+			msqldb.connect();
+			for(Papers paperObj: research) {
+				ArrayList<String> newKeywords = new ArrayList<>();
+				
+				//create the sql statement and execute it
+				String stmnt = "SELECT keyword FROM paper_keywords JOIN papers"
+						+ " ON paper_keywords.id = papers.id WHERE papers.id "
+						+ "= "+paperObj.getId();
+				ArrayList<ArrayList> dataSet = msqldb.getData(stmnt);
+				
+				//FOR each row in the data set
+				for(ArrayList<String> keywords: dataSet) {
+					//get the keywords and add them to a new keyword list
+					for(String s: keywords) {
+						newKeywords.add(s);
+					}
+				}
+				//add the list of keywords to the paper object
+				paperObj.setKeywords(newKeywords);
+			}
+		} catch (DLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}//END populateKeywords
    
-   //actionPerformed
-   public void actionPerformed(ActionEvent ae){      
-      if(ae.getActionCommand() == "Delete"){                    // Wait for someone to push Go!
-         System.out.println("Delete selected");
-      }
-      else if(ae.getActionCommand() == "Insert/Update"){
-         System.out.println("Insert/Update selected");
-      }  
-      else if(ae.getActionCommand() == "Search"){
-         System.out.println("Search selected");
- 
-      }    
-   }// end of actionPerformed
-
-   
-   
-
-}
+}//END PaperUI
 
 
 
