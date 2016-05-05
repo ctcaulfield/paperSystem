@@ -3,6 +3,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * @author Christopher Caulfield
@@ -11,6 +12,13 @@ import javax.swing.*;
 
 public class PaperUI implements ActionListener{
    
+	private final String TITLE = "Title";
+	private final String KEY = "Keywords";
+	private final String ABS = "Abstract";
+	private final String FN = "First Name";
+	private final String LN = "Last Name";
+	private final String CIT = "Citation";
+	
    private JFrame frame;
    private JPanel searchPanel;
    private JLabel  searchInfo;
@@ -32,6 +40,7 @@ public class PaperUI implements ActionListener{
    private JTextField citationField;
    private JTextArea authorTextArea;
    private JScrollPane authorScrollArea;
+   private DefaultTableModel model;
    
    //determine user permissions
    private boolean hasAccess;
@@ -59,9 +68,11 @@ public class PaperUI implements ActionListener{
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setLayout(new BorderLayout());
       frame.setLocationRelativeTo( null );
+      model = new DefaultTableModel();
       this.createGUI();
       frame.setSize(800, 550);
       frame.setVisible(true);
+      
    }
    
    public PaperUI(String facultyEmail, ArrayList<Faculty> faculty){
@@ -83,6 +94,7 @@ public class PaperUI implements ActionListener{
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setLayout(new BorderLayout());
       frame.setLocationRelativeTo( null ); 
+      model = new DefaultTableModel();
       this.createGUI();
       frame.setSize(700, 450);
       frame.setVisible(true);
@@ -99,8 +111,8 @@ public class PaperUI implements ActionListener{
       searchInfo = new JLabel("Enter Information: ", JLabel.RIGHT);
       searchBar = new JTextField(15);
       
-      //quick search bombo box
-      String[] searchWords = { "Title", "Keywords", "Abstract","First Name","Last Name","Citation"};
+      //quick search combo box
+      String[] searchWords = { TITLE, KEY, ABS,FN,LN,CIT};
       quickSearch = new JComboBox(searchWords);
       
       //search button
@@ -122,17 +134,10 @@ public class PaperUI implements ActionListener{
       //Create columns names
 		String columnNames[] = { "Paper title", "First name", "Last name","Citation","Abstract","Email"};
 
-		// Create some data
-		String dataValues[][] =
-		{
-			{ "12", "234", "67","12", "234", "67" },
-			{ "-123", "43", "853","12", "234", "67" },
-			{ "93", "89.2", "109","12", "234", "67" },
-			{ "279", "9033", "3092","12", "234", "67" }
-		};
-
 		// Create a new table instance
-		table = new JTable( dataValues, columnNames );
+		table = new JTable();
+        model.setColumnIdentifiers(columnNames);
+		table.setModel(model);
 
 		// Add the table to a scrolling pane
 		scrollPane = new JScrollPane( table );
@@ -280,8 +285,7 @@ public class PaperUI implements ActionListener{
 	}//END papersToAuthors
 	
 	/**
-	 * 
-	 * @param sql
+	 * Grabs a list of keywords associated with the paper objects
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void populateKeywords() {
@@ -313,7 +317,8 @@ public class PaperUI implements ActionListener{
 	}//END populateKeywords
    
    //actionPerformed
-   public void actionPerformed(ActionEvent ae){      
+   public void actionPerformed(ActionEvent ae){ 
+	   
       if(ae.getActionCommand() == "Delete"){                    // Wait for someone to push Go!
          System.out.println("Delete selected");
       }
@@ -321,11 +326,98 @@ public class PaperUI implements ActionListener{
          System.out.println("Insert/Update selected");
       }  
       else if(ae.getActionCommand() == "Search"){
+    	  model.setRowCount(0);
          System.out.println("Search selected");
- 
-      }    
+         String searchString = searchBar.getText();
+         String searchCriteria = quickSearch.getSelectedItem().toString();
+         
+         for(Papers p: research) {
+        	 String[] rowValues = new String[6];
+        	 ArrayList<Faculty> authors = p.getAuthors();
+        	 if(searchCriteria.equalsIgnoreCase(TITLE)) {
+        		 //IF the search word/s are in a title
+        		 if(p.getTitle().contains(searchString)) {
+        			 rowValues = setRow(p, authors);
+        		 }
+        	 }
+        	 else if(searchCriteria.equalsIgnoreCase(KEY)) {
+        		 ArrayList<String> keywords = p.getKeywords();
+        		 for(String s: keywords) {
+        			 if(s.contains(searchString)) {
+        				 rowValues = setRow(p, authors);
+        				 break;
+        			 }
+        		 }
+        	 }
+        	 else if(searchCriteria.equalsIgnoreCase(ABS)) {
+        		 if(p.getAbstract().contains(searchString)) {
+        			 rowValues = setRow(p, authors);
+        		 }
+        	 }
+        	 else if(searchCriteria.equalsIgnoreCase(FN)) {
+        		 for(Faculty f: authors) {
+        			 if(f.getFirstName().contains(searchString)) {
+        				 rowValues = setRow(p, authors);
+        				 break;
+        			 }
+        		 }
+        	 }
+        	 else if(searchCriteria.equalsIgnoreCase(LN)) {
+        		 for(Faculty f: authors) {
+        			 if(f.getLastName().contains(searchString)) {
+        				 rowValues = setRow(p, authors);
+        				 break;
+        			 }
+        		 }
+        	 }
+        	 else if(searchCriteria.equalsIgnoreCase(CIT)) {
+        		 if(p.getCitation().contains(searchString)) {
+        			 rowValues = setRow(p, authors);
+        		 }
+        	 }
+        	 else
+        		 JOptionPane.showMessageDialog(null, "No results matched your query", 
+            			 "", JOptionPane.ERROR_MESSAGE);
+        	 
+        	 model.addRow(rowValues);
+ 		 }
+         //model.removeRow(0);
+      }   
    }// end of actionPerformed
 
+   private String[] setRow(Papers p, ArrayList<Faculty> authorList) {
+	   String[] rowValues = new String[6];
+	   ArrayList<Faculty> authors = authorList;
+		 String fName = "";
+		 String lName = "";
+		 String email = "";
+		 for(Faculty f: authors) {
+			 fName += f.getFirstName() + " ";
+			 lName += f.getLastName() +  " ";
+			 email += f.getEmail() + " ";
+		 }
+		 for(int j=0; j<table.getColumnCount(); j++) {
+			 switch(j) {
+			 	case 0: rowValues[j] = p.getTitle();
+			 			break;
+			 	
+			 	case 1: rowValues[j] = fName;
+			 			break;
+			 	
+			 	case 2: rowValues[j] = lName;
+			 			break;
+			 	
+			 	case 3: rowValues[j] = p.getAbstract();
+			 			break;
+			 	
+			 	case 4: rowValues[j] = p.getCitation();
+			 			break;
+			 	
+			 	case 5: rowValues[j] = email;
+			 }
+		 }
+	   return rowValues;
+   }
    
 }//END PaperUI
 
