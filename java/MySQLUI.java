@@ -1,14 +1,15 @@
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
-
 import java.util.ArrayList;
 import java.math.BigInteger;
 import java.security.*;
 /**
  * @author Christopher Caulfield
  * @author Ian Kitchen
+ * 
+ * This class opens up the login screen and authenticates the user if 
+ * attempting to log in
  */
 public class MySQLUI extends JFrame implements ActionListener{
 
@@ -108,7 +109,10 @@ public class MySQLUI extends JFrame implements ActionListener{
    /**
     * 
     */
-   public void actionPerformed(ActionEvent ae){      
+   public void actionPerformed(ActionEvent ae){  
+	   
+	   boolean isUser = false;
+	   
       if(ae.getActionCommand() == "Student/Guest"){
          System.out.println("Log in button clicked");                       
             System.out.println("Open Student/Guest view");
@@ -144,8 +148,15 @@ public class MySQLUI extends JFrame implements ActionListener{
                  System.out.println("Open Faculty/Admin view"); 
                  paperView = new PaperUI(f.getEmail(), faculty);
                  this.dispose();
+                 isUser = true;
              }
 		 }
+         //IF the username or password was not found
+         if(!isUser)
+         {
+        	 JOptionPane.showMessageDialog(null, "Wrong username or password", 
+        			 "", JOptionPane.ERROR_MESSAGE);
+         }
  
       }     
    }// end of actionPerformed
