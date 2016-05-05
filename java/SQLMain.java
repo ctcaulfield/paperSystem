@@ -29,7 +29,7 @@ public class SQLMain {
 			System.out.println();
 			f.fetch();
 			f.put();
-			Faculty fac = new Faculty(3,"Boob","Dinger","rtrth","fghfgh");
+			Faculty fac = new Faculty(3,"Bob","Dinger","sr5hw46h","bdd@rit.edu");
 			fac.post();
 			fac.delete();
 		}
@@ -42,7 +42,7 @@ public class SQLMain {
 			System.out.println("\n");
 			p.fetch();
 			p.put();
-			Papers pap = new Papers(34,"sdfg","sdfg","sdfgr");
+			Papers pap = new Papers(34,"test","paper","Me");
 			pap.post();
 			pap.delete();
 		}
