@@ -3,6 +3,7 @@ import java.util.ArrayList;
 /**
  * 
  * @author Ian Kitchen <igk2718@rit.edu>
+ * @author Christopher Caulfield <cxc4115@rit.edu>
  * 
  * A Java object representing an entry in the faculty table
  */
@@ -105,6 +106,27 @@ public class Faculty {
 	public void setLastName(String lName) {
 		this.lName = lName;
 	}
+   
+
+ 	/**
+	 * Gets the first and last name of the faculty
+	 * 
+	 * @return the first and last name of the faculty
+	 */  
+   public String getFlname() {
+      return fName+","+lName;
+   }
+   
+   
+ 	/**
+	 * Sets the first and last name of the faculty
+	 * 
+	 */  
+   public void getFlname(String flName) {
+      String[] splitName = flName.split(",");
+      this.fName = splitName[0];
+      this.lName = splitName[1];
+   }
 	
 	/**
 	 * Gets the current password of the faculty
