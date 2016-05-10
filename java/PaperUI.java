@@ -33,8 +33,10 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    private JScrollPane scrollPane;
    private JPanel infoPanel;
    private JPanel editPanel;
+   private JButton updateButton;
    private JButton deleteButton;
-   private JButton editButton;
+   private JButton insertButton;
+   private JButton clearButton;
    private JTextArea textArea;
    private JScrollPane scrollArea;
    private JTextField titleField;
@@ -210,15 +212,22 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
       //create edit button panel
       editPanel = new JPanel();
       editPanel.setLayout(new FlowLayout());
+      clearButton = new JButton("Clear Fields");
+      editPanel.add(clearButton);
+      clearButton.addActionListener(this);
       
       if(hasAccess == true){
          deleteButton = new JButton("Delete");
          editPanel.add(deleteButton);
          deleteButton.addActionListener(this);
          
-         editButton = new JButton("Insert/Update");
-         editPanel.add(editButton);
-         editButton.addActionListener(this);
+         insertButton = new JButton("Insert");
+         editPanel.add(insertButton);
+         insertButton.addActionListener(this);
+         
+         updateButton = new JButton("Update");
+         editPanel.add(updateButton);
+         updateButton.addActionListener(this);
       }
       else{
          titleField.setEditable(false);
@@ -349,11 +358,20 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
 
          System.out.println("Delete selected");
       }
-      else if(ae.getActionCommand().equalsIgnoreCase("Insert/Update")){
-         System.out.println("Insert/Update selected");
+      else if(ae.getActionCommand().equalsIgnoreCase("Insert")){
+         System.out.println("Insert");
       }  
-
-
+       else if(ae.getActionCommand().equalsIgnoreCase("Update")){
+         System.out.println("Update selected");
+      }     
+      else if(ae.getActionCommand().equalsIgnoreCase("Clear fields")){
+          titleField.setText("");
+          emailField.setText("");
+          keywordsField.setText("");
+          citationField.setText("");
+          authorTextArea.setText("");
+          abstractTextArea.setText("");      
+      }   
       else if(ae.getActionCommand().equalsIgnoreCase("Search")){
       	model.setRowCount(0);
          System.out.println("Search selected");
@@ -531,10 +549,3 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
   public void mouseReleased(MouseEvent e){}
   public void mouseClicked(MouseEvent e){}
 }//END PaperUI
-
-
-
-
-
-
-
