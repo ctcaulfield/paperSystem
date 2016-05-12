@@ -355,14 +355,27 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    public void actionPerformed(ActionEvent ae){      
       if(ae.getActionCommand() == "Delete"){  
                         // Wait for someone to push Go!
-
          System.out.println("Delete selected");
       }
       else if(ae.getActionCommand().equalsIgnoreCase("Insert")){
          System.out.println("Insert");
+         
       }  
        else if(ae.getActionCommand().equalsIgnoreCase("Update")){
          System.out.println("Update selected");
+         //update faculty
+
+          for(Papers p: research) {
+              //values.get(0) is the title name from arrayList
+              String title = p.getTitle().trim();
+              if(title.equals(titleField.getText())){                 
+                 ArrayList<Faculty> authors = p.getAuthors();
+                 //ArrayList<Fac
+                 p.setTitle(titleField.getText());
+                 p.setAbstract(abstractTextArea.getText());
+                 //p.setAuthors(ArrayList<Faculty> authors);
+              }
+          }//end of Papers for loop
       }     
       else if(ae.getActionCommand().equalsIgnoreCase("Clear fields")){
           titleField.setText("");
