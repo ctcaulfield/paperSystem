@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -37,7 +38,6 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    private JButton deleteButton;
    private JButton insertButton;
    private JButton clearButton;
-   private JTextArea textArea;
    private JScrollPane scrollArea;
    private JTextField titleField;
    private JTextField emailField;
@@ -48,6 +48,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    private DefaultTableModel model;
    private JTextArea abstractTextArea;
    private JScrollPane abstractScrollArea;
+   private Papers selectedPaper; //the selected paper from the grid 
    
    //determine user permissions
    private boolean hasAccess;
@@ -117,6 +118,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
       };
       this.createGUI();
       frame.setSize(700, 450);
+      frame.setResizable(false);
       frame.setVisible(true);
    }
    
@@ -152,18 +154,17 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
       tablePanel.setLayout( new BorderLayout());
       
       //Create columns names
-		String columnNames[] = { "Paper title", "First name", "Last name","Citation","Abstract","Email"};
-		// Create a new table instance
-		table = new JTable();
-        model.setColumnIdentifiers(columnNames);
-		table.setModel(model);
+	  String columnNames[] = { "Paper title", "First name", "Last name","Citation","Abstract","Email"};
+		
+	  // Create a new table instance
+      table = new JTable();
+      model.setColumnIdentifiers(columnNames);
+      table.setModel(model);
       table.addMouseListener(this);
       
-      
-		// Add the table to a scrolling pane
-		scrollPane = new JScrollPane( table );
-		tablePanel.add( scrollPane, BorderLayout.CENTER );
-
+	  // Add the table to a scrolling pane
+	  scrollPane = new JScrollPane( table );
+	  tablePanel.add( scrollPane, BorderLayout.CENTER );
       frame.add(tablePanel, BorderLayout.CENTER);
             
       //fill information panel 
@@ -175,10 +176,9 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
       titleField = new JTextField();
       infoPanel.add(titleField);
      
-     //Author
+      //Author
       authorTextArea = new JTextArea(20,25);
       authorScrollArea = new JScrollPane(authorTextArea);
-      
       infoPanel.add(new JLabel("Author: ", JLabel.RIGHT));
       infoPanel.add(authorScrollArea);
  
@@ -197,12 +197,11 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
       citationField = new JTextField();
       infoPanel.add(citationField); 
       
-      textArea = new JTextArea(20,25);
-      scrollArea = new JScrollPane(textArea);
-      
       //Abstract
       abstractTextArea = new JTextArea(20,25);
       abstractScrollArea = new JScrollPane(abstractTextArea);
+      abstractTextArea.setLineWrap(true);
+      abstractTextArea.setWrapStyleWord(true);
       
       infoPanel.add(new JLabel("Abstract: ", JLabel.RIGHT));
       infoPanel.add(abstractScrollArea);
@@ -229,12 +228,14 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
          editPanel.add(updateButton);
          updateButton.addActionListener(this);
       }
+      //A student/guest is logged in, make the fields non-editable
       else{
          titleField.setEditable(false);
          authorTextArea.setEditable(false);
          keywordsField.setEditable(false);
          citationField.setEditable(false);
-         textArea.setEditable(false);
+         emailField.setEditable(false);
+         abstractTextArea.setEditable(false);
       }
       
       frame.add(editPanel, BorderLayout.SOUTH);
@@ -354,29 +355,40 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    //actionPerformed
    public void actionPerformed(ActionEvent ae){      
       if(ae.getActionCommand() == "Delete"){  
-                        // Wait for someone to push Go!
          System.out.println("Delete selected");
+         selectedPaper.delete();
       }
+      /**
+       * this is gunna be tricky as shit
+       */
       else if(ae.getActionCommand().equalsIgnoreCase("Insert")){
          System.out.println("Insert");
+         String title = titleField.getText();
+         String pAbstract = abstractTextArea.getText();
+         String citation = citationField.getText();
+         String keywords = keywordsField.getText();
+         int pID = 1;
          
+         for(Papers p: research) {
+        	 if(p.getId() == pID)
+        		 pID++;
+         }
+         
+         Papers newPaper = new Papers(pID, title, pAbstract, citation);
+         newPaper.post();
+         research = populatePapers();
       }  
-       else if(ae.getActionCommand().equalsIgnoreCase("Update")){
-         System.out.println("Update selected");
-         //update faculty
-
-          for(Papers p: research) {
-              //values.get(0) is the title name from arrayList
-              String title = p.getTitle().trim();
-              if(title.equals(titleField.getText())){                 
-                 ArrayList<Faculty> authors = p.getAuthors();
-                 //ArrayList<Fac
-                 p.setTitle(titleField.getText());
-                 p.setAbstract(abstractTextArea.getText());
-                 //p.setAuthors(ArrayList<Faculty> authors);
-              }
-          }//end of Papers for loop
-      }     
+      else if(ae.getActionCommand().equalsIgnoreCase("Update")){
+          System.out.println("Update selected");
+          //update the paper details
+          selectedPaper.setTitle(titleField.getText());
+          selectedPaper.setAbstract(abstractTextArea.getText());
+          selectedPaper.setCitation(citationField.getText());
+          selectedPaper.put();
+      }
+      /**
+       * Clear the details text areas
+       */
       else if(ae.getActionCommand().equalsIgnoreCase("Clear fields")){
           titleField.setText("");
           emailField.setText("");
@@ -385,8 +397,11 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
           authorTextArea.setText("");
           abstractTextArea.setText("");      
       }   
+      /**
+       * If the user pressed the search button
+       */
       else if(ae.getActionCommand().equalsIgnoreCase("Search")){
-      	model.setRowCount(0);
+      	 model.setRowCount(0);
          System.out.println("Search selected");
          String searchString = searchBar.getText();
          String searchCriteria = quickSearch.getSelectedItem().toString();
@@ -397,7 +412,8 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
         	 //IF the search criteria is by title
         	 if(searchCriteria.equalsIgnoreCase(TITLE)) {
         		 //IF the search word/s are in a title
-        		 if(p.getTitle().toLowerCase().contains(searchString.toLowerCase())) {
+        		 if(p.getTitle().toLowerCase().contains(
+        				 searchString.toLowerCase())) {
         			 rowValues = setRow(p, authors);
         		 }
         	 }
@@ -413,14 +429,18 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
         	 }
         	 //IF the search criteria is by abstracts
         	 else if(searchCriteria.equalsIgnoreCase(ABS)) {
-        		 if(p.getAbstract().toLowerCase().contains(searchString.toLowerCase())) {
+        		 if(p.getAbstract().toLowerCase().contains(
+        				 searchString.toLowerCase())) {
+        			 
         			 rowValues = setRow(p, authors);
         		 }
         	 }
         	 //IF the search criteria is by first names
         	 else if(searchCriteria.equalsIgnoreCase(FN)) {
         		 for(Faculty f: authors) {
-        			 if(f.getFirstName().toLowerCase().contains(searchString.toLowerCase())) {
+        			 if(f.getFirstName().toLowerCase().contains(
+        					 searchString.toLowerCase())) {
+        				 
         				 rowValues = setRow(p, authors);
         				 break;
         			 }
@@ -429,7 +449,9 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
         	 //IF the search criteria is by last names
         	 else if(searchCriteria.equalsIgnoreCase(LN)) {
         		 for(Faculty f: authors) {
-        			 if(f.getLastName().toLowerCase().contains(searchString.toLowerCase())) {
+        			 if(f.getLastName().toLowerCase().contains(
+        					 searchString.toLowerCase())) {
+        				 
         				 rowValues = setRow(p, authors);
         				 break;
         			 }
@@ -437,14 +459,17 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
         	 }
         	 //IF the search criteria is by the citations
         	 else if(searchCriteria.equalsIgnoreCase(CIT)) {
-        		 if(p.getCitation().toLowerCase().contains(searchString.toLowerCase())) {
+        		 if(p.getCitation().toLowerCase().contains(
+        				 searchString.toLowerCase())) {
+        			 
         			 rowValues = setRow(p, authors);
         		 }
         	 }
-        	 //ELSE no match exists: currently wrong
+        	 //ELSE no match exists
         	 else
-        		 JOptionPane.showMessageDialog(null, "No results matched your query", 
-            			 "", JOptionPane.ERROR_MESSAGE);
+        		 JOptionPane.showMessageDialog(null, 
+        				 "No results matched your query","", 
+        				 JOptionPane.ERROR_MESSAGE);
         	 
         	 //add the new row 
         	 try {
@@ -461,50 +486,65 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    }// end of actionPerformed
      
    /**
+    * Populates a row of the data grid
     * 
-    * @param p
-    * @param authorList
-    * @return
+    * @param p - the paper object
+    * @param authorList - list of authors who wrote the article
+    * @return an array of strings containing the data of this row
     */
    private String[] setRow(Papers p, ArrayList<Faculty> authorList) {
 	   String[] rowValues = new String[6];
-	   ArrayList<Faculty> authors = authorList;
 	   String fName = "";
 	   String lName = "";
 	   String email = "";
-	   for(Faculty f: authors) {
+	   
+	   //for each of the authors of the paper 
+	   for(Faculty f: authorList) {
 	       fName += f.getFirstName() + " ";
 	       lName += f.getLastName() +  " ";
 	       email += f.getEmail() + " ";
 	   }
+	   //FOR each column in the data table
 	   for(int j=0; j<table.getColumnCount(); j++) {
 	       switch(j) {
+	           //the column is the paper title
 		       case 0: rowValues[j] = p.getTitle();
 			 		   break;
-			 	
+			   
+			   //the column is the first names	   
 			   case 1: rowValues[j] = fName;
 			 		   break;
 			 	
+			   //the column is the last names
 			   case 2: rowValues[j] = lName;
 			 		   break;
 			 	
-			   case 3: rowValues[j] = p.getAbstract();
+			   //the column is the abstract
+			   case 3: rowValues[j] = p.getCitation();
 			 		   break;
 			 	
-			   case 4: rowValues[j] = p.getCitation();
+			   //the column is the citations
+			   case 4: rowValues[j] = p.getAbstract();
 			 		   break;
 			 	
+			   //the column is the emails
 			   case 5: rowValues[j] = email;
 			 }
 	   }
 	   return rowValues;
-   }
+	   
+   }//END setRow
    
-  //Mouse listeners - all methods must be implemented or else it will throw an error 
-  public void mousePressed(MouseEvent e){
+  /**
+   * Mouse listeners - all methods must be implemented or else it will throw an 
+   * error 
+   */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+public void mousePressed(MouseEvent e){
      int row = table.rowAtPoint(e.getPoint());
      int i=0;
      ArrayList<String> values = new ArrayList<String>();
+     
      while(i<table.getColumnCount()){
        //may have to change this logic if
        //does not convert to String safely
@@ -513,20 +553,33 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
        i++;
      }
      for(Papers p: research) {
-        //values.get(0) is the title name from arrayList
+    	 
         String title = p.getTitle().trim();
         String selected = values.get(0).trim();
         if(title.equals(selected)){
+        	
+        	//set the global paper variable to the selected paper
+        	selectedPaper = p; 
+        	
            System.out.println("made it");
+           
+           //set the title text field to the title
            titleField.setText(p.getTitle());
+           
+           //get the keywords of the paper
            ArrayList<String> keywords = p.getKeywords();
            String key = "";
            for(String keyword:keywords){
              key+=(keyword+",");
            }
            //remove last comma from key
-           key = key.substring(0, key.length() - 1);
+           if(key.length() > 2)
+               key = key.substring(0, key.length() - 1);
+           
+           //add the keywords to the keyword text field
            keywordsField.setText(key);
+           
+           //add the citations to the citation field
            citationField.setText(p.getCitation());
            
            //get faculty data
@@ -538,24 +591,29 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
               emails.add(f.getEmail());
               flnames.add(f.getFlname());           
            }
+           //make a faculty name string
+           String strFlNames = "";
+           for(String flname:flnames){
+              strFlNames = strFlNames + (flname + "\n");
+           }
+           //append the names to the name text field
+           authorTextArea.setText(strFlNames);
+           
+           //make a faculty email string
            String strEmails = "";
            for(String email:emails){
              strEmails+=(email+",");
            }
-           //remove last comma from email
+           //remove last comma from email and set the email text field
            strEmails = strEmails.substring(0, strEmails.length() - 1);
            emailField.setText(strEmails);
            
-           String strFlNames = "";
-           for(String flname:flnames){
-              strFlNames = strFlNames + (flname + "\n");
-           }           
-           authorTextArea.setText(strFlNames);
+           //set the abstract to the abstract text area
            abstractTextArea.setText(p.getAbstract());    
+           
+           break;
         }
      }
-   
-     
   }
   public void mouseEntered(MouseEvent e){}
   public void mouseExited(MouseEvent e){}
