@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.math.BigInteger;
 import java.security.*;
+
 /**
  * @author Christopher Caulfield
  * @author Ian Kitchen
@@ -14,13 +15,9 @@ import java.security.*;
 public class MySQLUI extends JFrame implements ActionListener{
 
 
-	private MySQLDatabase msqldb;
-	private ArrayList<Faculty> faculty;
-
-   /**
-    * The JPanel that holds the Messages panel.
-    */
-   private JPanel jpContainer;
+   private MySQLDatabase msqldb; //Data layer class that interacts with the db
+   private ArrayList<Faculty> faculty; //Array of faculty objects
+   private JPanel jpContainer; // The JPanel that holds the Messages panel.
    
    private JPanel jpMessages;  
    private JPanel jpWelcome;
@@ -32,20 +29,17 @@ public class MySQLUI extends JFrame implements ActionListener{
    private JTextField jtfPass;
    private JButton jbLogIn;
    private JButton jbStudentGuest;
-   private JButton jbGo;
-   private ButtonGroup bgUsers;
-   private String[] theArgs;
    
-   private PaperUI paperView;
+   private PaperUI paperView; // The view that displays the paper info
    
    /**
-    * The font that is used throughout the splash screen.
+    * The font that is used throughout the login screen.
     */
    Font font = new Font("Helvetica", Font.BOLD, 12);
 
    /**
-    * Creates the required JPanels for the TCSplash.
-    * It then sets up the splash screen, and adds
+    * Creates the required JPanels for the Login screen.
+    * It then sets up the log in screen, and adds
     * action listeners onto the buttons.
     */
    public MySQLUI(){  
@@ -107,25 +101,31 @@ public class MySQLUI extends JFrame implements ActionListener{
    }// end of TCSplash Constructor
    
    /**
-    * 
+    * Listeners for login
     */
    public void actionPerformed(ActionEvent ae){  
 	   
-	   boolean isUser = false;
+       boolean isUser = false;
 	   
-      if(ae.getActionCommand() == "Student/Guest"){
-         System.out.println("Log in button clicked");                       
-            System.out.println("Open Student/Guest view");
-            paperView = new PaperUI(faculty);
-            this.dispose();
-            
+       //if the student/guest button was clicked
+      if(ae.getActionCommand().equalsIgnoreCase("Student/Guest")){
+    	  // print to console that the login button was pressed as well as the
+    	  // Student/guest button 
+          System.out.println("Log in button clicked");
+          System.out.println("Open Student/Guest view");
+          
+          //open an instance of the Papers UI for students/guests
+          paperView = new PaperUI(faculty);
+          this.dispose();  
       }
-      else if(ae.getActionCommand() == "Log in"){
+      //IF the Log in button was pressed
+      else if(ae.getActionCommand().equalsIgnoreCase("Log in")){
          System.out.println("Student/Guest button clicked"); 
          String hashtext = "";
          String username = jtfEmail.getText();
          String password = jtfPass.getText(); 
     	 MessageDigest m;
+    	 
 		 try {
 		     //encode the password given by user
 		     m = MessageDigest.getInstance("MD5");
@@ -154,6 +154,7 @@ public class MySQLUI extends JFrame implements ActionListener{
          //IF the username or password was not found
          if(!isUser)
          {
+        	 //display to user that a wrong password was entered
         	 JOptionPane.showMessageDialog(null, "Wrong username or password", 
         			 "", JOptionPane.ERROR_MESSAGE);
          }
@@ -173,19 +174,27 @@ public class MySQLUI extends JFrame implements ActionListener{
 		ArrayList<Faculty> faculty = new ArrayList<>();
 		
 		try {
+			//connect to db
 			sql.connect();
 			
+			//create SQL statement
 			String stmnt = "SELECT * FROM faculty";
 			
+			//get results of the query
 			ArrayList<ArrayList> resultsTable = sql.getData(stmnt);
 			
+			//FOR each of the results
 			for(ArrayList<String> l: resultsTable) {
+				// get the faculty ID, first name, last name, password, and 
+				// email and create a new faculty object with the results
 				int id = Integer.parseInt(l.get(0));
 				String fName = l.get(1);
 				String lName = l.get(2);
 				String password = l.get(3);
 				String email = l.get(4);
 				Faculty newF = new Faculty(id, fName, lName, password, email);
+				
+				//add new faculty object to an array of faculty
 				faculty.add(newF);			
 			}
 			
