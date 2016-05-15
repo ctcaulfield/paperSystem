@@ -1,12 +1,13 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
 
 /**
  * @author Christopher Caulfield
@@ -49,6 +50,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    private JTextArea abstractTextArea;
    private JScrollPane abstractScrollArea;
    private Papers selectedPaper; //the selected paper from the grid 
+   private Scanner keywordScan;
    
    //determine user permissions
    private boolean hasAccess;
@@ -357,9 +359,10 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
       if(ae.getActionCommand() == "Delete"){  
          System.out.println("Delete selected");
          selectedPaper.delete();
+         research.remove(research.indexOf(selectedPaper));
       }
       /**
-       * this is gunna be tricky as shit
+       * 
        */
       else if(ae.getActionCommand().equalsIgnoreCase("Insert")){
          System.out.println("Insert");
@@ -367,14 +370,42 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
          String pAbstract = abstractTextArea.getText();
          String citation = citationField.getText();
          String keywords = keywordsField.getText();
+         String email = emailField.getText();
+         String authors = authorTextArea.getText();
+         ArrayList<String> newKeywords = new ArrayList<>();
+         ArrayList<Faculty> authorList = new ArrayList<>();
          int pID = 1;
          
+         //create a unique ID
          for(Papers p: research) {
         	 if(p.getId() == pID)
         		 pID++;
+         }         
+         //get the keywords
+         keywordScan = new Scanner(keywords);
+         keywordScan.useDelimiter(",");
+         while(keywordScan.hasNext()) {
+             newKeywords.add(keywordScan.next());
+         }
+         //get the authors
+         keywordScan = new Scanner(authors);
+         while(keywordScan.hasNextLine()) {
+             String fullName = keywordScan.nextLine();
+             
+             //loop through the faculty to find the correct author
+             System.out.println(email);
+             for(Faculty f: faculty) {
+            	 if(f.getEmail().equalsIgnoreCase(email)) {
+            		 authorList.add(f);
+            		 break;
+            	 }
+             }
          }
          
+         //create a new paper object and add it into the database
          Papers newPaper = new Papers(pID, title, pAbstract, citation);
+         newPaper.setKeywords(newKeywords);
+         newPaper.setAuthors(authorList);
          newPaper.post();
          research = populatePapers();
       }  
@@ -609,6 +640,7 @@ public void mousePressed(MouseEvent e){
              strEmails+=(email+",");
            }
            //remove last comma from email and set the email text field
+           System.out.println(strEmails + "\n\n");
            strEmails = strEmails.substring(0, strEmails.length() - 1);
            emailField.setText(strEmails);
            

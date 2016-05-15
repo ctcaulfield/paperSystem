@@ -276,7 +276,9 @@ public class Papers {
 	 */
 	public void post() {
 		String stmnt = "INSERT INTO papers VALUES (?,?,?,?)";
+		String keyStmnt = "INSERT INTO paper_keywords VALUES (?,?)";
 		ArrayList<String> values = new ArrayList<>(4);
+		ArrayList<String> keyValues;
 		values.add(Integer.toString(paperId));
 		values.add(title);
 		values.add(pAbstract);
@@ -284,7 +286,19 @@ public class Papers {
 		
 		try {
 			mysqldb.connect();
+			mysqldb.startTrans();
 			mysqldb.setData(stmnt, values);
+			
+			//loop through keywords and insert them into the keywords table
+			for(String keyword: keywords) {
+				keyValues = new ArrayList<>(2);
+				keyValues.add(Integer.toString(paperId));
+				keyValues.add(keyword);
+				
+				mysqldb.setData(keyStmnt, keyValues);
+			}
+			
+			mysqldb.endTrans();
 			mysqldb.close();
 				
 		} catch (DLException e) {
@@ -299,10 +313,19 @@ public class Papers {
 	 */
 	public void delete() {
 		String stmnt = "DELETE FROM papers WHERE id = " + paperId;
+		String keyStmnt = "DELETE FROM paper_keywords WHERE id = " + paperId;
 		
 		try {
 			mysqldb.connect();
+			mysqldb.startTrans();
+			
+			//delete keywords first
+			mysqldb.setData(keyStmnt);
+			
+			//then delete the paper
 			mysqldb.setData(stmnt);
+			
+			mysqldb.endTrans();
 			mysqldb.close();
 				
 		} catch (DLException e) {
