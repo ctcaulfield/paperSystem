@@ -154,7 +154,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
       tablePanel.setLayout( new BorderLayout());
       
       //Create columns names
-	  String columnNames[] = { "Paper title", "First name", "Last name","Citation","Abstract","Email"};
+	  String columnNames[] = { "Paper title", "First name", "Last name","Citation","Abstract","Email","Paper ID"};
 		
 	  // Create a new table instance
       table = new JTable();
@@ -493,7 +493,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
     * @return an array of strings containing the data of this row
     */
    private String[] setRow(Papers p, ArrayList<Faculty> authorList) {
-	   String[] rowValues = new String[6];
+	   String[] rowValues = new String[7];
 	   String fName = "";
 	   String lName = "";
 	   String email = "";
@@ -507,8 +507,8 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
 	   //FOR each column in the data table
 	   for(int j=0; j<table.getColumnCount(); j++) {
 	       switch(j) {
-	           //the column is the paper title
-		       case 0: rowValues[j] = p.getTitle();
+	         //the column is the paper title
+		      case 0: rowValues[j] = p.getTitle();
 			 		   break;
 			   
 			   //the column is the first names	   
@@ -529,7 +529,11 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
 			 	
 			   //the column is the emails
 			   case 5: rowValues[j] = email;
-			 }
+                  break;
+            
+            //the column is the paper id
+			   case 6: rowValues[j] = p.getId()+"";
+          }
 	   }
 	   return rowValues;
 	   
@@ -554,9 +558,9 @@ public void mousePressed(MouseEvent e){
      }
      for(Papers p: research) {
     	 
-        String title = p.getTitle().trim();
-        String selected = values.get(0).trim();
-        if(title.equals(selected)){
+        String paperId = p.getId()+"";
+        String selected = values.get(6).trim();
+        if(paperId.equals(selected)){
         	
         	//set the global paper variable to the selected paper
         	selectedPaper = p; 
