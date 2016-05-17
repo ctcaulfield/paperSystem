@@ -76,7 +76,7 @@ public class MySQLUI extends JFrame implements ActionListener{
 	   jpMessages.add( jpWho );
 	
 	   //remove this when finished testing
-	   jtfEmail = new JTextField("sjz@it.rit.edu");             // Add the TextField
+	   jtfEmail = new JTextField("jdmics@rit.edu");             // Add the TextField
 	   jtfPass = new JTextField("sjz");
 	    
 	   // Add the TextField

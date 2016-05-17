@@ -54,6 +54,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    
    //determine user permissions
    private boolean hasAccess;
+   private boolean isAdmin;
    private String facultyEmail;
    
    //data layer
@@ -94,6 +95,9 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    public PaperUI(String facultyEmail, ArrayList<Faculty> faculty){
       //setup preferences
       hasAccess = true;
+      if(facultyEmail.contains("@rit.edu")){
+         isAdmin = true;
+      }
       this.facultyEmail = facultyEmail;
       
       //instantiate the data layer
@@ -356,10 +360,28 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    
    //actionPerformed
    public void actionPerformed(ActionEvent ae){      
-      if(ae.getActionCommand() == "Delete"){  
-         System.out.println("Delete selected");
-         selectedPaper.delete();
-         research.remove(research.indexOf(selectedPaper));
+      if(ae.getActionCommand() == "Delete"){ 
+         boolean isAuthor = false;
+         ArrayList<Faculty> authors = selectedPaper.getAuthors();
+         for(Faculty author: authors){
+            System.out.println("paper email"+author.getEmail());
+            System.out.println("user email"+facultyEmail);
+            if(author.getEmail().equals(facultyEmail)){
+               System.out.println("is author");
+               isAuthor = true;
+            }
+         }
+         System.out.println("admin"+isAdmin);
+         System.out.println("author"+isAuthor);
+         if(isAdmin||isAuthor){
+            System.out.println("Delete selected");
+            selectedPaper.delete();
+            research.remove(research.indexOf(selectedPaper));
+         } 
+         else{
+            System.out.println("You must be an admin or author to delete this paper");
+            JOptionPane.showMessageDialog(frame, "You must be an admin or author to delete this paper");
+         }
       }
       /**
        * 
@@ -408,14 +430,28 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
          newPaper.setAuthors(authorList);
          newPaper.post();
          research = populatePapers();
+      
+      
       }  
       else if(ae.getActionCommand().equalsIgnoreCase("Update")){
           System.out.println("Update selected");
-          //update the paper details
-          selectedPaper.setTitle(titleField.getText());
-          selectedPaper.setAbstract(abstractTextArea.getText());
-          selectedPaper.setCitation(citationField.getText());
-          selectedPaper.put();
+          boolean isAuthor = false;
+          ArrayList<Faculty> authors = selectedPaper.getAuthors();
+          for(Faculty author: authors){
+             if(author.getEmail().equals(facultyEmail)){
+                isAuthor = true;
+             }
+          }
+          if(isAdmin||isAuthor){
+             //update the paper details
+             selectedPaper.setTitle(titleField.getText());
+             selectedPaper.setAbstract(abstractTextArea.getText());
+             selectedPaper.setCitation(citationField.getText());
+             selectedPaper.put();        
+          }
+          else{
+            JOptionPane.showMessageDialog(frame, "You must be an admin or author to update this paper");
+          }
       }
       /**
        * Clear the details text areas

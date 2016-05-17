@@ -5,7 +5,7 @@ import java.util.Date;
 
 /**
  * 
- * @author wisidiggidy
+ * @author Ian Kitchen <igk2718@rit.edu>
  *
  */
 public class DLException extends Exception {
