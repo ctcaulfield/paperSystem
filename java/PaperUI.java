@@ -29,6 +29,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
    private JTextField searchBar;
    private JComboBox quickSearch;
    private JButton searchButton;
+   private JButton logoutButton;
    private JPanel tablePanel;
    private String dataValues[][];
    private JTable table;
@@ -89,6 +90,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
       this.createGUI();
       frame.setSize(800, 550);
       frame.setVisible(true);
+      frame.setLocationRelativeTo(null);
       
    }
    
@@ -123,9 +125,10 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
     	  }
       };
       this.createGUI();
-      frame.setSize(700, 450);
+      frame.setSize(900, 450);
       frame.setResizable(false);
       frame.setVisible(true);
+      frame.setLocationRelativeTo(null);
    }
    
    
@@ -145,14 +148,20 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
       
       //search button
       searchButton = new JButton("Search");
+      //logout button
+      logoutButton = new JButton("Logout");
+      
+      
       
       
       searchPanel.add(searchBar);
       searchPanel.add(quickSearch);
       searchPanel.add(searchButton);
+      searchPanel.add(logoutButton);
       
       //action listener
       searchButton.addActionListener(this);
+      logoutButton.addActionListener(this);
       
       frame.add(searchPanel, BorderLayout.NORTH);
       
@@ -243,6 +252,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
          emailField.setEditable(false);
          abstractTextArea.setEditable(false);
       }
+      
       
       frame.add(editPanel, BorderLayout.SOUTH);
    }
@@ -548,6 +558,17 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
  		 }
          //model.removeRow(0);
          System.out.println("Search selected");  
+      }
+      else if(ae.getActionCommand().equalsIgnoreCase("Logout")){
+         frame.setVisible(false);
+         frame.dispose();
+         MySQLUI signIn = new MySQLUI();
+         signIn.setVisible( true );
+         signIn.setSize(300, 300);
+         signIn.setLocationRelativeTo( null );
+         signIn.setDefaultCloseOperation( javax.swing.JFrame.EXIT_ON_CLOSE );
+         signIn.pack(); 
+         
       }    
 
    }// end of actionPerformed

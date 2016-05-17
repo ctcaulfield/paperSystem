@@ -21,5 +21,4 @@ public class SQLMain {
          signIn.pack(); 
 			
 	}//END main
-
 }//END SQLMain
