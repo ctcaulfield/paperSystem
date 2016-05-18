@@ -439,6 +439,8 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
          newPaper.setKeywords(newKeywords);
          newPaper.setAuthors(authorList);
          newPaper.post();
+         
+         //re-populate the papers array and re-synch the keywords and authors
          research = populatePapers();
          papersToAuthors();
          populateKeywords();
