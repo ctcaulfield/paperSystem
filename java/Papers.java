@@ -277,8 +277,10 @@ public class Papers {
 	public void post() {
 		String stmnt = "INSERT INTO papers VALUES (?,?,?,?)";
 		String keyStmnt = "INSERT INTO paper_keywords VALUES (?,?)";
+		String facStmnt = "INSERT INTO authorship VALUES (?,?)";
 		ArrayList<String> values = new ArrayList<>(4);
 		ArrayList<String> keyValues;
+		ArrayList<String> authorValues;
 		values.add(Integer.toString(paperId));
 		values.add(title);
 		values.add(pAbstract);
@@ -297,6 +299,14 @@ public class Papers {
 				
 				mysqldb.setData(keyStmnt, keyValues);
 			}
+		    //loop through the authors and insert them into the authorship table
+			for(Faculty f: authors) {
+				authorValues = new ArrayList<>(2);
+				authorValues.add(Integer.toString(f.getId()));
+				authorValues.add(Integer.toString(paperId));
+				
+				mysqldb.setData(facStmnt, authorValues);
+			}
 			
 			mysqldb.endTrans();
 			mysqldb.close();
@@ -314,6 +324,7 @@ public class Papers {
 	public void delete() {
 		String stmnt = "DELETE FROM papers WHERE id = " + paperId;
 		String keyStmnt = "DELETE FROM paper_keywords WHERE id = " + paperId;
+		String authStmnt = "DELETE FROM authorship WHERE id = " + paperId;
 		
 		try {
 			mysqldb.connect();
@@ -321,6 +332,9 @@ public class Papers {
 			
 			//delete keywords first
 			mysqldb.setData(keyStmnt);
+			
+			//then delete the authorship
+			mysqldb.setData(authStmnt);
 			
 			//then delete the paper
 			mysqldb.setData(stmnt);

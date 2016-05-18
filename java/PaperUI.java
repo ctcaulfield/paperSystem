@@ -440,8 +440,8 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
          newPaper.setAuthors(authorList);
          newPaper.post();
          research = populatePapers();
-      
-      
+         papersToAuthors();
+         populateKeywords();
       }  
       else if(ae.getActionCommand().equalsIgnoreCase("Update")){
           System.out.println("Update selected");
