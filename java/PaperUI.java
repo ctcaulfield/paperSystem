@@ -369,7 +369,8 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
 	}//END populateKeywords
    
    //actionPerformed
-   public void actionPerformed(ActionEvent ae){      
+   public void actionPerformed(ActionEvent ae){   
+	   //DELETE
       if(ae.getActionCommand() == "Delete"){ 
          boolean isAuthor = false;
          ArrayList<Faculty> authors = selectedPaper.getAuthors();
@@ -387,15 +388,14 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
             System.out.println("Delete selected");
             selectedPaper.delete();
             research.remove(research.indexOf(selectedPaper));
+            clearData();
          } 
          else{
             System.out.println("You must be an admin or author to delete this paper");
             JOptionPane.showMessageDialog(frame, "You must be an admin or author to delete this paper");
          }
       }
-      /**
-       * 
-       */
+      //INSERT
       else if(ae.getActionCommand().equalsIgnoreCase("Insert")){
          System.out.println("Insert");
          String title = titleField.getText();
@@ -403,7 +403,6 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
          String citation = citationField.getText();
          String keywords = keywordsField.getText();
          String email = emailField.getText();
-         String authors = authorTextArea.getText();
          ArrayList<String> newKeywords = new ArrayList<>();
          ArrayList<Faculty> authorList = new ArrayList<>();
          int pID = 1;
@@ -420,20 +419,12 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
              newKeywords.add(keywordScan.next());
          }
          //get the authors
-         keywordScan = new Scanner(authors);
-         while(keywordScan.hasNextLine()) {
-             String fullName = keywordScan.nextLine();
-             
-             //loop through the faculty to find the correct author
-             System.out.println(email);
-             for(Faculty f: faculty) {
-            	 if(f.getEmail().equalsIgnoreCase(email)) {
-            		 authorList.add(f);
-            		 break;
-            	 }
-             }
-         }
-         
+         for(Faculty f: faculty) {
+        	 if(email.contains(f.getEmail())) {
+        		 System.out.println("made it");
+        		 authorList.add(f);
+        	 }
+         }      
          //create a new paper object and add it into the database
          Papers newPaper = new Papers(pID, title, pAbstract, citation);
          newPaper.setKeywords(newKeywords);
@@ -445,11 +436,14 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
          papersToAuthors();
          populateKeywords();
       }  
+      //UPDATE
       else if(ae.getActionCommand().equalsIgnoreCase("Update")){
           System.out.println("Update selected");
           boolean isAuthor = false;
           ArrayList<Faculty> authors = selectedPaper.getAuthors();
+           
           for(Faculty author: authors){
+        	  System.out.println("loop");
              if(author.getEmail().equals(facultyEmail)){
                 isAuthor = true;
              }
@@ -459,7 +453,12 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
              selectedPaper.setTitle(titleField.getText());
              selectedPaper.setAbstract(abstractTextArea.getText());
              selectedPaper.setCitation(citationField.getText());
-             selectedPaper.put();        
+             selectedPaper.put();   
+             
+             //re-populate the papers array and re-synch the keywords and authors
+             research = populatePapers();
+             papersToAuthors();
+             populateKeywords();
           }
           else{
             JOptionPane.showMessageDialog(frame, "You must be an admin or author to update this paper");
@@ -469,12 +468,7 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
        * Clear the details text areas
        */
       else if(ae.getActionCommand().equalsIgnoreCase("Clear fields")){
-          titleField.setText("");
-          emailField.setText("");
-          keywordsField.setText("");
-          citationField.setText("");
-          authorTextArea.setText("");
-          abstractTextArea.setText("");      
+          clearData();      
       }   
       /**
        * If the user pressed the search button
@@ -575,6 +569,14 @@ public class PaperUI extends JFrame implements ActionListener,MouseListener{
 
    }// end of actionPerformed
      
+   private void clearData() {
+	   titleField.setText("");
+       emailField.setText("");
+       keywordsField.setText("");
+       citationField.setText("");
+       authorTextArea.setText("");
+       abstractTextArea.setText("");  
+   }
    /**
     * Populates a row of the data grid
     * 

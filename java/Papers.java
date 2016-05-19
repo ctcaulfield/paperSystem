@@ -324,7 +324,7 @@ public class Papers {
 	public void delete() {
 		String stmnt = "DELETE FROM papers WHERE id = " + paperId;
 		String keyStmnt = "DELETE FROM paper_keywords WHERE id = " + paperId;
-		String authStmnt = "DELETE FROM authorship WHERE id = " + paperId;
+		String authStmnt = "DELETE FROM authorship WHERE paperId = " + paperId;
 		
 		try {
 			mysqldb.connect();
